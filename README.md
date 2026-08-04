@@ -1,40 +1,37 @@
 # Celtic FC Supporters Hub
 
-A fully static, responsive Celtic FC information hub hosted directly with GitHub Pages.
+A static, responsive Celtic FC dashboard hosted directly by GitHub Pages.
 
-## Live site
-
-https://deanderson96.github.io/celtic/
+Live site: `https://deanderson96.github.io/celtic/`
 
 ## Features
 
-- Celtic club overview
-- Upcoming fixtures and recent scores
-- Scottish Premiership league table
-- Searchable and filterable first-team squad
-- Separate Europe page
-- Europe page only displays UEFA Champions League, Europa League or Conference League events returned for Celtic
-- Responsive design using `#172B23` as the primary background colour
-- Partial-data and API-error handling
+- Full-season Celtic fixture list assembled across the competitions listed by TheSportsDB
+- Upcoming and completed fixture filters
+- Recent results
+- Full Celtic squad with player and position search
+- Next-match preview with both team badges, league positions, recent results, venue and latest meeting
+- Subtle highlighting for matches at Celtic Park
+- Scottish Premiership table
+- Dedicated Europe page limited to the Champions League, Europa League and Conference League
+- Responsive layout using `#172B23` as the primary background colour
 
-## Data
+## Data refresh
 
-The site loads live sports data in the visitor's browser using TheSportsDB v1 API and its public free key.
+The site is served as plain HTML, CSS, JavaScript and JSON from `main`; no build process is required. A scheduled GitHub Action refreshes `data.json` every day from TheSportsDB. It expands the club and season pages into a complete public dataset, then GitHub Pages republishes automatically.
 
-The free API limits some endpoints, including the number of players and team events returned. The interface clearly handles those limitations rather than failing or displaying invented information.
+The browser also has a direct v1 API fallback, so core team, fixture, squad and table information can still appear when a generated refresh is unavailable.
 
-## GitHub Pages
+## Files
 
-GitHub Pages serves the repository's `main` branch from the repository root. There is no build step, package installation, framework runtime or deployment workflow.
-
-The complete site consists of:
-
-- `index.html` — main Celtic hub
-- `europe.html` — Celtic's UEFA competition page
-- `README.md` — project documentation
-
-Any update committed to `main` is published automatically by GitHub Pages.
+- `index.html` — main hub
+- `europe.html` — Celtic's active UEFA competitions
+- `styles.css` — shared responsive design
+- `app.js` — main-page data and rendering logic
+- `europe.js` — European fixture filtering
+- `data.json` — generated season, squad and preview data
+- `.github/workflows/refresh-data.yml` — daily data refresh
 
 ## Disclaimer
 
-This is an unofficial supporter project and is not affiliated with Celtic Football Club.
+This is an unofficial supporter project and is not affiliated with Celtic Football Club. Sports data is supplied by TheSportsDB.
