@@ -4,23 +4,158 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#172B23">
-  <meta name="description" content="Unofficial Celtic FC hub for full-season fixtures, squad, results, match previews, transfer news and European football.">
+  <meta name="description" content="A professional Celtic FC information hub for fixtures, results, squad data, standings, European football and transfer news.">
   <title>Celtic FC Hub</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="home">
-<header class="topbar"><div class="wrap nav"><a class="brand" href="./"><span class="crest">☘</span><span><strong>Celtic FC</strong><small>Supporters Hub</small></span></a><button class="menu" id="menu" type="button" aria-expanded="false">Menu</button><nav class="links" id="links"><a class="active" href="./">Home</a><a href="#preview">Preview</a><a href="#fixtures">Fixtures</a><a href="#transfers">Transfers</a><a href="#squad">Squad</a><a href="#table">Table</a><a href="europe.html">Europe</a></nav></div></header>
-<main>
-  <section class="hero"><div class="wrap hero-grid"><div><p class="eyebrow">One club. One hub.</p><h1>Everything Celtic, together.</h1><p class="lead">The complete season schedule, full squad, results, standings, transfer news and a data-led preview of the next match.</p><div class="actions"><a class="button primary" href="#fixtures">Season fixtures</a><a class="button secondary" href="europe.html">Celtic in Europe</a></div></div><article class="club-card"><img id="club-badge" alt="Celtic badge"><div><p class="eyebrow">The Bhoys</p><h2 id="club-name">Celtic FC</h2><p id="club-meta">Celtic Park · Founded 1888</p><span class="pill" id="club-league">Scottish Premiership</span></div></article></div><div class="wrap status" id="status" role="status"></div></section>
-  <section class="stats"><div class="stat"><span>Next match</span><strong id="next-summary">Loading…</strong></div><div class="stat"><span>SPFL fixtures</span><strong id="fixture-summary">Loading…</strong></div><div class="stat"><span>Squad players</span><strong id="squad-summary">Loading…</strong></div><div class="stat"><span>League position</span><strong id="position-summary">Loading…</strong></div></section>
-  <section class="section alt" id="preview"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Next up</p><h2>Match preview</h2><p class="section-note">Team, table and recent-result data supplied by TheSportsDB. Kickoff times are shown in BST.</p></div></div><div id="preview-content"><div class="loading"><span></span><span></span><span></span></div></div></div></section>
-  <section class="section" id="fixtures"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Full campaign</p><h2>Season fixtures</h2><p class="section-note" id="fixture-note">All Celtic matches found across this season's competitions.</p></div><button class="refresh" id="refresh" type="button">Refresh data</button></div><div class="fixture-tools" id="fixture-tools"><button class="active" data-filter="all">All</button><button data-filter="upcoming">Upcoming</button><button data-filter="completed">Completed</button><span class="fixture-count" id="fixture-count"></span></div><div id="fixtures-grid" class="grid"><div class="loading"><span></span><span></span><span></span></div></div></div></section>
-  <section class="section alt" id="results"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Latest</p><h2>Recent results</h2></div></div><div id="results-grid" class="grid"><div class="loading"><span></span><span></span><span></span></div></div></div></section>
-  <section class="section" id="transfers"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Recruitment watch</p><h2>Latest transfer news</h2><p class="section-note">Confirmed moves and clearly labelled speculation from a curated list of reputable publishers.</p></div></div><div id="transfer-grid" class="news-grid"><div class="loading"><span></span><span></span><span></span></div></div><p class="news-disclaimer">Transfer reports can change quickly. Open the original publisher for full context and confirmation.</p></div></section>
-  <section class="section alt" id="table"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Scottish Premiership</p><h2>League table</h2><p class="section-note" id="season-label"></p></div></div><div id="table-content"><div class="loading"><span></span><span></span><span></span></div></div></div></section>
-  <section class="section" id="squad"><div class="wrap"><div class="section-head"><div><p class="eyebrow">The Bhoys</p><h2>Full squad</h2><p class="section-note">Every current Celtic player found in the refreshed club dataset.</p></div></div><p class="squad-count" id="squad-count"></p><div class="tools"><input id="player-search" type="search" placeholder="Search by player or position" aria-label="Search players"><select id="position-filter" aria-label="Filter by position"><option value="">All positions</option></select></div><div id="squad-grid" class="players"><div class="loading"><span></span><span></span><span></span></div></div></div></section>
-</main>
-<footer><div class="wrap footer-row"><div><strong>Celtic FC Supporters Hub</strong><p>Unofficial fan project. Not affiliated with Celtic Football Club.</p><span class="updated" id="updated"></span></div><a href="https://www.thesportsdb.com" target="_blank" rel="noreferrer">Data supplied by TheSportsDB ↗</a></div></footer>
-<script src="app.js" defer></script>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="./" aria-label="Celtic FC Hub home">
+        <span class="crest">☘</span>
+        <span><strong>Celtic FC Hub</strong><small>Club intelligence dashboard</small></span>
+      </a>
+      <button class="menu" id="menu" type="button" aria-expanded="false" aria-controls="links">Menu</button>
+      <nav class="links" id="links" aria-label="Primary navigation">
+        <a class="active" href="./">Overview</a>
+        <a href="#fixtures">Fixtures</a>
+        <a href="#transfers">Transfers</a>
+        <a href="#table">Table</a>
+        <a href="#squad">Squad</a>
+        <a href="europe.html">Europe</a>
+      </nav>
+      <div class="data-state"><span></span><b>Live data</b></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="wrap page-header-grid">
+        <div>
+          <div class="breadcrumbs"><span>Club dashboard</span><i>/</i><strong>2026–27 season</strong></div>
+          <h1>Celtic performance centre</h1>
+          <p>Fixtures, results, league position, squad intelligence and credible transfer reporting in one operational view.</p>
+        </div>
+        <div class="header-actions">
+          <a class="button secondary" href="europe.html">European campaign</a>
+          <button class="button primary" id="refresh" type="button">Refresh data</button>
+        </div>
+      </div>
+      <div class="wrap status" id="status" role="status"></div>
+    </section>
+
+    <div class="wrap dashboard">
+      <section class="panel club-overview" aria-labelledby="club-overview-title">
+        <div class="club-identity">
+          <div class="badge-shell"><img id="club-badge" alt="Celtic badge"></div>
+          <div>
+            <p class="kicker">Club profile</p>
+            <h2 id="club-name">Celtic FC</h2>
+            <p id="club-meta">Celtic Park · Founded 1888</p>
+            <span class="pill" id="club-league">Scottish Premiership</span>
+          </div>
+        </div>
+        <div class="overview-next">
+          <span>Next fixture</span>
+          <strong id="next-summary">Loading…</strong>
+          <small id="next-date-summary">Awaiting schedule</small>
+        </div>
+      </section>
+
+      <section class="metric-grid" aria-label="Season metrics">
+        <article class="metric"><span>League coverage</span><strong id="fixture-summary">Loading…</strong><small>Published SPFL fixtures</small></article>
+        <article class="metric"><span>League position</span><strong id="position-summary">Loading…</strong><small>Current table standing</small></article>
+        <article class="metric"><span>First-team squad</span><strong id="squad-summary">Loading…</strong><small>Official roster records</small></article>
+        <article class="metric"><span>Data freshness</span><strong id="freshness-summary">Live</strong><small id="updated">Loading dataset…</small></article>
+      </section>
+
+      <section class="panel preview-panel" id="preview">
+        <div class="panel-heading">
+          <div>
+            <p class="kicker">Match intelligence</p>
+            <h2>Next match preview</h2>
+          </div>
+          <span class="panel-badge">BST / GMT adjusted</span>
+        </div>
+        <div id="preview-content"><div class="loading"><span></span><span></span><span></span></div></div>
+      </section>
+
+      <aside class="side-stack" aria-label="Season overview">
+        <section class="panel coverage-panel">
+          <div class="panel-heading compact"><div><p class="kicker">SPFL programme</p><h2>Season coverage</h2></div></div>
+          <div class="coverage-value"><strong id="coverage-value">0/38</strong><span>league fixtures published</span></div>
+          <div class="progress"><span id="coverage-progress"></span></div>
+          <p id="coverage-note">Post-split fixtures will be added automatically once published.</p>
+        </section>
+
+        <section class="panel results-panel" id="results">
+          <div class="panel-heading compact"><div><p class="kicker">Latest form</p><h2>Recent results</h2></div></div>
+          <div id="results-grid" class="result-list"><div class="loading"><span></span><span></span><span></span></div></div>
+        </section>
+      </aside>
+
+      <section class="panel fixtures-panel" id="fixtures">
+        <div class="panel-heading">
+          <div>
+            <p class="kicker">Competition schedule</p>
+            <h2>Season fixtures</h2>
+            <p class="panel-note" id="fixture-note">All published Celtic fixtures across the season.</p>
+          </div>
+          <span class="fixture-count" id="fixture-count"></span>
+        </div>
+        <div class="fixture-toolbar" id="fixture-tools">
+          <div class="segmented" aria-label="Fixture status filter">
+            <button class="active" data-filter="all" type="button">All</button>
+            <button data-filter="upcoming" type="button">Upcoming</button>
+            <button data-filter="completed" type="button">Completed</button>
+          </div>
+          <label><span>Competition</span><select id="competition-filter"><option value="all">All competitions</option></select></label>
+          <label><span>Venue</span><select id="venue-filter"><option value="all">All venues</option><option value="home">Celtic Park</option><option value="away">Away</option></select></label>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table fixtures-table">
+            <thead><tr><th>Date</th><th>Competition</th><th>Fixture</th><th>Venue</th><th>Status</th></tr></thead>
+            <tbody id="fixtures-grid"><tr><td colspan="5"><div class="loading"><span></span><span></span><span></span></div></td></tr></tbody>
+          </table>
+        </div>
+        <div class="panel-footer"><button class="text-button" id="show-more" type="button">Show more fixtures</button></div>
+      </section>
+
+      <section class="panel transfer-panel" id="transfers">
+        <div class="panel-heading">
+          <div><p class="kicker">Recruitment desk</p><h2>Latest transfer intelligence</h2><p class="panel-note">Approved publishers only, with confirmation status clearly labelled.</p></div>
+        </div>
+        <div id="transfer-grid" class="news-list"><div class="loading"><span></span><span></span><span></span></div></div>
+        <p class="disclaimer">Transfer reports can change quickly. Open the original publisher for full context.</p>
+      </section>
+
+      <section class="panel table-panel" id="table">
+        <div class="panel-heading">
+          <div><p class="kicker">Scottish Premiership</p><h2>League table</h2><p class="panel-note" id="season-label"></p></div>
+        </div>
+        <div id="table-content"><div class="loading"><span></span><span></span><span></span></div></div>
+      </section>
+
+      <section class="panel squad-panel" id="squad">
+        <div class="panel-heading squad-heading">
+          <div><p class="kicker">First team</p><h2>Squad directory</h2><p class="panel-note" id="squad-count">Loading official roster…</p></div>
+          <div class="tools">
+            <input id="player-search" type="search" placeholder="Search player or position" aria-label="Search players">
+            <select id="position-filter" aria-label="Filter by position"><option value="">All positions</option></select>
+          </div>
+        </div>
+        <div id="squad-grid" class="players"><div class="loading"><span></span><span></span><span></span></div></div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <div><strong>Celtic FC Hub</strong><p>Unofficial supporter project. Not affiliated with Celtic Football Club.</p></div>
+      <div class="footer-links"><a href="https://www.thesportsdb.com" target="_blank" rel="noreferrer">TheSportsDB</a><a href="europe.html">Europe</a></div>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
