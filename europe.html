@@ -1,1 +1,59 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#172B23"><meta name="description" content="Celtic FC European fixtures and results."><title>Celtic in Europe | Celtic FC Hub</title><link rel="stylesheet" href="styles.css"></head><body data-page="europe"><header class="topbar"><div class="wrap nav"><a class="brand" href="./"><span class="crest">☘</span><span><strong>Celtic FC</strong><small>Supporters Hub</small></span></a><button class="menu" id="menu" type="button" aria-expanded="false">Menu</button><nav class="links" id="links"><a href="./">Home</a><a class="active" href="europe.html">Europe</a></nav></div></header><main><section class="hero compact"><div class="wrap"><p class="eyebrow">Celtic in Europe</p><h1 id="europe-title">European campaign</h1><p class="lead">Only Champions League, Europa League and Conference League matches involving Celtic are shown here.</p><div class="status" id="status" role="status"></div></div></section><section class="section"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Season schedule</p><h2>European fixtures</h2><p class="section-note" id="europe-note"></p></div></div><div id="europe-grid" class="grid"><div class="loading"><span></span><span></span><span></span></div></div></div></section></main><footer><div class="wrap footer-row"><div><strong>Celtic FC Supporters Hub</strong><p>Unofficial fan project. Not affiliated with Celtic Football Club.</p></div><a href="https://www.thesportsdb.com" target="_blank" rel="noreferrer">Data supplied by TheSportsDB ↗</a></div></footer><script src="europe.js" defer></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#172B23">
+  <meta name="description" content="Celtic FC European competition dashboard.">
+  <title>Celtic in Europe | Celtic FC Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="europe">
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="./"><span class="crest">☘</span><span><strong>Celtic FC Hub</strong><small>Club intelligence dashboard</small></span></a>
+      <button class="menu" id="menu" type="button" aria-expanded="false" aria-controls="links">Menu</button>
+      <nav class="links" id="links"><a href="./">Overview</a><a href="./#fixtures">Fixtures</a><a href="./#transfers">Transfers</a><a class="active" href="europe.html">Europe</a></nav>
+      <div class="data-state"><span></span><b>Live data</b></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header europe-header">
+      <div class="wrap page-header-grid">
+        <div>
+          <div class="breadcrumbs"><span>Club dashboard</span><i>/</i><strong>Europe</strong></div>
+          <h1 id="europe-title">European campaign</h1>
+          <p>Dedicated coverage of the UEFA competition Celtic are participating in, with no unrelated tournament data.</p>
+        </div>
+        <div class="header-actions"><a class="button secondary" href="./">Back to overview</a></div>
+      </div>
+      <div class="wrap status" id="status" role="status"></div>
+    </section>
+
+    <div class="wrap dashboard europe-dashboard">
+      <section class="metric-grid europe-metrics">
+        <article class="metric"><span>Competition</span><strong id="europe-competition">TBC</strong><small>Active UEFA tournament</small></article>
+        <article class="metric"><span>Published matches</span><strong id="europe-count">0</strong><small>Current season</small></article>
+        <article class="metric"><span>Home fixtures</span><strong id="europe-home-count">0</strong><small>At Celtic Park</small></article>
+        <article class="metric"><span>Next European match</span><strong id="europe-next">TBC</strong><small id="europe-next-date">Awaiting schedule</small></article>
+      </section>
+
+      <section class="panel europe-summary-panel">
+        <div class="panel-heading"><div><p class="kicker">Campaign overview</p><h2 id="europe-summary-title">European schedule</h2><p class="panel-note" id="europe-note"></p></div><span class="panel-badge">London time</span></div>
+        <div id="europe-highlight" class="europe-highlight"><div class="loading"><span></span><span></span><span></span></div></div>
+      </section>
+
+      <section class="panel europe-fixtures-panel">
+        <div class="panel-heading"><div><p class="kicker">UEFA schedule</p><h2>Fixtures and results</h2></div></div>
+        <div class="data-table-wrap">
+          <table class="data-table fixtures-table"><thead><tr><th>Date</th><th>Competition</th><th>Fixture</th><th>Venue</th><th>Status</th></tr></thead><tbody id="europe-grid"><tr><td colspan="5"><div class="loading"><span></span><span></span><span></span></div></td></tr></tbody></table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer><div class="wrap footer-row"><div><strong>Celtic FC Hub</strong><p>Unofficial supporter project. Not affiliated with Celtic Football Club.</p></div><div class="footer-links"><a href="https://www.thesportsdb.com" target="_blank" rel="noreferrer">TheSportsDB</a><a href="./">Overview</a></div></div></footer>
+  <script src="europe.js" defer></script>
+</body>
+</html>
