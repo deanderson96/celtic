@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { formatDate, getCelticTeam, getNextEvents, getPlayers, getPreviousEvents, isEuropeanEvent } from './api';
 import './styles.css';
 
@@ -68,4 +68,4 @@ function App() {
   return <Layout><Routes><Route path="/" element={<Home data={state} loading={loading} error={error}/>}/><Route path="/europe" element={<Europe data={state} loading={loading}/>}/></Routes></Layout>;
 }
 
-createRoot(document.getElementById('root')).render(<React.StrictMode><BrowserRouter><App /></BrowserRouter></React.StrictMode>);
+createRoot(document.getElementById('root')).render(<React.StrictMode><HashRouter><App /></HashRouter></React.StrictMode>);
