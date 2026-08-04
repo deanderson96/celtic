@@ -1,0 +1,73 @@
+name: Refresh Celtic season data
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/refresh-data.yml']
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-celtic-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install HTML parser
+        run: npm install --no-save cheerio@1.0.0
+      - name: Build complete season dataset
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs/promises';
+          import * as cheerio from 'cheerio';
+          const API='https://www.thesportsdb.com/api/v1/json/123';
+          const TEAM_ID='133647';
+          const delay=ms=>new Promise(r=>setTimeout(r,ms));
+          const currentSeason=()=>{const d=new Date(),y=d.getUTCFullYear();return d.getUTCMonth()>=6?`${y}-${y+1}`:`${y-1}-${y}`};
+          async function json(path){const r=await fetch(`${API}/${path}`,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${path}: ${r.status}`);return r.json()}
+          async function html(url){const r=await fetch(url,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${url}: ${r.status}`);return r.text()}
+          async function lookupMany(ids,endpoint,key){const out=[];for(const id of ids){try{const data=await json(`${endpoint}?id=${id}`),item=(data[key]||[])[0];if(item)out.push(item)}catch(e){console.warn(e.message)}await delay(2150)}return out}
+          const season=currentSeason();
+          const team=(await json(`lookupteam.php?id=${TEAM_ID}`)).teams?.[0]||null;
+          const teamHtml=await html(`https://www.thesportsdb.com/team/${TEAM_ID}-celtic`);
+          const $team=cheerio.load(teamHtml);
+          const competitions=new Map();
+          $team('a[href*="/league/"]').each((_,a)=>{const href=$team(a).attr('href')||'',m=href.match(/\/league\/(\d+)-([^?#]+)/);if(m)competitions.set(m[1],m[2])});
+          if(team?.idLeague)competitions.set(String(team.idLeague),'scottish-premier-league');
+          const eventIds=new Set();
+          const collectEvents=markup=>{const $=cheerio.load(markup);$('a[href*="/event/"]').each((_,a)=>{const m=($(a).attr('href')||'').match(/\/event\/(\d+)/);if(m)eventIds.add(m[1])})};
+          collectEvents(teamHtml);
+          for(const [leagueId,slug] of competitions){try{const url=`https://www.thesportsdb.com/season/${leagueId}-${slug}/${season}%26t%3D${TEAM_ID}-celtic`;collectEvents(await html(url));console.log('Competition',leagueId,slug)}catch(e){console.warn(e.message)}await delay(700)}
+          if(!eventIds.size){for(const leagueId of competitions.keys()){try{const data=await json(`eventsseason.php?id=${leagueId}&s=${season}`);for(const e of data.events||[])if(String(e.idHomeTeam)===TEAM_ID||String(e.idAwayTeam)===TEAM_ID)eventIds.add(e.idEvent)}catch(e){console.warn(e.message)}}}
+          const fixtures=await lookupMany([...eventIds],'lookupevent.php','events');
+          const playerIds=new Set();
+          $team('a[href*="/player/"]').each((_,a)=>{const m=($team(a).attr('href')||'').match(/\/player\/(\d+)/);if(m)playerIds.add(m[1])});
+          let players=await lookupMany([...playerIds],'lookupplayer.php','players');
+          players=players.filter(p=>String(p.idTeam||'')===TEAM_ID||/celtic/i.test(p.strTeam||''));
+          if(players.length<15){try{const apiPlayers=(await json(`lookup_all_players.php?id=${TEAM_ID}`)).player||[];const map=new Map([...players,...apiPlayers].map(p=>[p.idPlayer,p]));players=[...map.values()]}catch(e){console.warn(e.message)}}
+          let table=[];try{table=(await json(`lookuptable.php?l=${team?.idLeague||4330}&s=${season}`)).table||[]}catch(e){console.warn(e.message)}
+          fixtures.sort((a,b)=>`${a.dateEvent||''} ${a.strTime||''}`.localeCompare(`${b.dateEvent||''} ${b.strTime||''}`));
+          const now=Date.now()-10800000,next=fixtures.find(e=>e.intHomeScore==null&&Date.parse(`${e.dateEvent}T${(e.strTime||'15:00:00').slice(0,8)}`)>=now)||fixtures.find(e=>e.intHomeScore==null)||null;
+          let preview=null;if(next){const [homeTeam,awayTeam,homeRecent,awayRecent]=await Promise.all([json(`lookupteam.php?id=${next.idHomeTeam}`).then(x=>x.teams?.[0]||null).catch(()=>null),json(`lookupteam.php?id=${next.idAwayTeam}`).then(x=>x.teams?.[0]||null).catch(()=>null),json(`eventslast.php?id=${next.idHomeTeam}`).then(x=>x.results||[]).catch(()=>[]),json(`eventslast.php?id=${next.idAwayTeam}`).then(x=>x.results||[]).catch(()=>[])]);preview={event:next,homeTeam,awayTeam,homeRecent,awayRecent}}
+          const data={generatedAt:new Date().toISOString(),season,team,fixtures,players:players.sort((a,b)=>(a.strPosition||'').localeCompare(b.strPosition||'')||(a.strPlayer||'').localeCompare(b.strPlayer||'')),table,preview,coverage:{competitions:[...competitions.entries()].map(([id,slug])=>({id,slug})),eventCount:fixtures.length,playerCount:players.length}};
+          await fs.writeFile('data.json',JSON.stringify(data));
+          console.log(`Wrote ${fixtures.length} fixtures and ${players.length} players`);
+          NODE
+      - name: Publish refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Refresh Celtic season data"
+          git push
