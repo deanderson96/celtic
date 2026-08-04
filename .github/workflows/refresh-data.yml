@@ -65,9 +65,13 @@ jobs:
           NODE
       - name: Publish refreshed data
         run: |
+          cp data.json /tmp/celtic-data.json
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/celtic-data.json data.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data.json
           git diff --cached --quiet && exit 0
           git commit -m "Refresh Celtic season data"
-          git push
+          git push origin HEAD:main
