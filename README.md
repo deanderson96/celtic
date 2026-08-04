@@ -1,47 +1,39 @@
 # Celtic FC Supporters Hub
 
-A responsive, unofficial Celtic FC dashboard built with React and Vite. It brings club details, upcoming fixtures, recent results, first-team players and Celtic's current European campaign into one place.
+A fully static, responsive Celtic FC information hub hosted directly with GitHub Pages.
+
+## Live site
+
+https://deanderson96.github.io/celtic/
 
 ## Features
 
-- Celtic FC club overview
-- Upcoming fixtures and recent results
-- Searchable first-team squad
-- Dedicated Europe page
-- Automatic filtering for UEFA Champions League, Europa League and Conference League events
-- Responsive layout using `#172B23` as the primary background colour
-- Graceful empty and API-error states
+- Celtic club overview
+- Upcoming fixtures and recent scores
+- Scottish Premiership league table
+- Searchable and filterable first-team squad
+- Separate Europe page
+- Europe page only displays UEFA Champions League, Europa League or Conference League events returned for Celtic
+- Responsive design using `#172B23` as the primary background colour
+- Partial-data and API-error handling
 
-## Data source
+## Data
 
-Sports data is supplied by [TheSportsDB](https://www.thesportsdb.com/documentation).
+The site loads live sports data in the visitor's browser using TheSportsDB v1 API and its public free key.
 
-The app uses the free development key (`123`) by default. For production, copy `.env.example` to `.env` and add your own API key:
+The free API limits some endpoints, including the number of players and team events returned. The interface clearly handles those limitations rather than failing or displaying invented information.
 
-```bash
-VITE_SPORTSDB_API_KEY=your_key_here
-```
+## GitHub Pages
 
-The free API may return fewer upcoming or previous events than paid plans. The Europe page only displays competitions found in Celtic's returned event data.
+GitHub Pages serves the repository's `main` branch from the repository root. There is no build step, package installation, framework runtime or deployment workflow.
 
-## Run locally
+The complete site consists of:
 
-```bash
-npm install
-npm run dev
-```
+- `index.html` — main Celtic hub
+- `europe.html` — Celtic's UEFA competition page
+- `README.md` — project documentation
 
-Create a production build with:
-
-```bash
-npm run build
-```
-
-## Main files
-
-- `src/api.js` — TheSportsDB client and European competition filtering
-- `src/main.jsx` — application routes and UI components
-- `src/styles.css` — responsive Celtic-themed visual design
+Any update committed to `main` is published automatically by GitHub Pages.
 
 ## Disclaimer
 
