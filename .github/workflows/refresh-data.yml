@@ -82,7 +82,15 @@ jobs:
             const $news=cheerio.load(xml,{xmlMode:true});
             const approved=/^(Celtic FC|BBC Sport|Sky Sports|The Guardian|The Athletic|STV News|The Herald|ESPN)$/i;
             const seen=new Set(),items=[];
-            $news('item').each((_,item)=>{const node=$news(item),source=node.find('source').text().trim(),rawTitle=node.find('title').text().trim();if(!approved.test(source)||!/celtic/i.test(rawTitle)||/women|women's/i.test(rawTitle))return;const title=rawTitle.replace(new RegExp(`\\s+-\\s+${source.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')}$`,'i'),'').trim(),key=normalise(title);if(seen.has(key))return;seen.add(key);const lower=title.toLowerCase(),kind=/celtic fc/i.test(source)?'Official':/signs|signed|joins|joined|completes|completed|agrees|agreed|club-record|permanent switch/i.test(lower)?'Confirmed':/linked|target|interest|monitor|eyeing|want|rumour|could|bid|pursuing/i.test(lower)?'Speculation':'Report';items.push({title,url:node.find('link').text().trim(),source,publishedAt:new Date(node.find('pubDate').text().trim()).toISOString(),kind})});
+            $news('item').each((_,item)=>{
+              const node=$news(item),source=node.find('source').text().trim(),rawTitle=node.find('title').text().trim();
+              if(!approved.test(source)||!/celtic/i.test(rawTitle)||/women|women's/i.test(rawTitle))return;
+              const suffix=` - ${source}`;
+              const title=rawTitle.toLowerCase().endsWith(suffix.toLowerCase())?rawTitle.slice(0,-suffix.length).trim():rawTitle.trim();
+              const key=normalise(title);if(seen.has(key))return;seen.add(key);
+              const lower=title.toLowerCase(),kind=/celtic fc/i.test(source)?'Official':/signs|signed|joins|joined|completes|completed|agrees|agreed|club-record|permanent switch/i.test(lower)?'Confirmed':/linked|target|interest|monitor|eyeing|want|rumour|could|bid|pursuing/i.test(lower)?'Speculation':'Report';
+              items.push({title,url:node.find('link').text().trim(),source,publishedAt:new Date(node.find('pubDate').text().trim()).toISOString(),kind});
+            });
             const fresh=items.sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt)).slice(0,9);if(fresh.length)transferNews=fresh;
           }catch(e){console.warn('Transfer news:',e.message)}
 
