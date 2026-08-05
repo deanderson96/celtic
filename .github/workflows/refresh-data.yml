@@ -36,12 +36,6 @@ jobs:
           const delay=ms=>new Promise(r=>setTimeout(r,ms));
           const normalise=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
           const currentSeason=()=>{const d=new Date(),y=d.getUTCFullYear();return d.getUTCMonth()>=6?`${y}-${y+1}`:`${y-1}-${y}`};
-          const fallbackRoster=[
-            ['Viljami Sinisalo','Goalkeeper'],['Ross Doohan','Goalkeeper'],
-            ['Alistair Johnston','Defender'],['Liam Scales','Defender'],['Auston Trusty','Defender'],['Cameron Carter-Vickers','Defender'],['Adam Montgomery','Defender'],['Dane Murray','Defender'],['Colby Donovan','Defender'],['Anthony Ralston','Defender'],['Kieran Tierney','Defender'],
-            ['Benjamin Nygren','Midfielder'],['Luke McCowan','Midfielder'],['Alex Oxlade-Chamberlain','Midfielder'],['Arne Engels','Midfielder'],['Paulo Bernardo','Midfielder'],['Reo Hatate','Midfielder'],['Callum McGregor','Midfielder'],
-            ['Jota','Forward'],['Kasper Høgh','Forward'],['Michel-Ange Balikwisha','Forward'],['Camilo Durán','Forward'],['Hyunjun Yang','Forward'],['Callum Osmand','Forward'],['Sebastian Tounekti','Forward'],['Johnny Kenny','Forward'],['James Forrest','Forward']
-          ].map(([name,position])=>({name,position}));
           const seedTransferNews=[
             {title:"West Ham eye Arne Engels and Everton pursue Alistair Johnston",url:"https://www.theguardian.com/football/2026/aug/04/football-transfer-rumour-mill-chelsea-mykhailo-mudryk-lampard-coventry",source:"The Guardian",publishedAt:"2026-08-04T08:00:00Z",kind:"Speculation"},
             {title:"Kasper Høgh completes club-record move from Bodø/Glimt",url:"https://www.skysports.com/football/news/11095/13566947/celtic-transfer-news-kasper-hogh-completes-club-record-move-from-bodo-glimt",source:"Sky Sports",publishedAt:"2026-07-28T14:48:00Z",kind:"Confirmed"},
@@ -67,29 +61,10 @@ jobs:
           for(const [leagueId,slug] of competitions){try{const url=`https://www.thesportsdb.com/season/${leagueId}-${slug}/${season}%26t%3D${TEAM_ID}-celtic`;collectEvents(await html(url));console.log('Competition',leagueId,slug)}catch(e){console.warn(e.message)}await delay(700)}
           if(!eventIds.size){for(const leagueId of competitions.keys()){try{const data=await json(`eventsseason.php?id=${leagueId}&s=${season}`);for(const e of data.events||[])if(String(e.idHomeTeam)===TEAM_ID||String(e.idAwayTeam)===TEAM_ID)eventIds.add(e.idEvent)}catch(e){console.warn(e.message)}}}
           const fixtures=await lookupMany([...eventIds],'lookupevent.php','events');
-
-          const officialHtml=await html('https://www.celticfc.com/teams/');
-          const $official=cheerio.load(officialHtml);
-          const tokens=$official('body').text().split(/\n+/).map(x=>x.trim()).filter(Boolean);
-          const start=tokens.indexOf('Goalkeepers'),end=tokens.indexOf('Team Overview',start);
-          let officialRoster=[];let group='Player';
-          for(let i=Math.max(start,0);i<(end>start?end:tokens.length);i++){
-            if(['Goalkeepers','Defenders','Midfielders','Forwards'].includes(tokens[i])){group=tokens[i];continue}
-            if(tokens[i+1]==='Profile Unavailable')officialRoster.push({name:tokens[i],position:group==='Goalkeepers'?'Goalkeeper':group==='Defenders'?'Defender':group==='Midfielders'?'Midfielder':group==='Forwards'?'Forward':'Player'});
-          }
-          if(officialRoster.length<20)officialRoster=fallbackRoster;
-          const playerIds=new Set();
-          $team('a[href*="/player/"]').each((_,a)=>{const m=($team(a).attr('href')||'').match(/\/player\/(\d+)/);if(m)playerIds.add(m[1])});
-          const candidates=await lookupMany([...playerIds],'lookupplayer.php','players');
-          const byName=new Map(candidates.map(p=>[normalise(p.strPlayer),p]));
-          const players=[];
-          for(const member of officialRoster){let player=byName.get(normalise(member.name));if(!player){try{const result=await json(`searchplayers.php?p=${encodeURIComponent(member.name)}`);player=(result.player||[]).find(p=>normalise(p.strPlayer)===normalise(member.name)&&(String(p.idTeam||'')===TEAM_ID||/celtic/i.test(p.strTeam||'')))||null}catch(e){console.warn(e.message)}await delay(2150)}players.push(player||{idPlayer:`official-${normalise(member.name)}`,idTeam:TEAM_ID,strTeam:'Celtic',strPlayer:member.name,strPosition:member.position,strNationality:'',strStatus:'Active'})}
-
           let table=[];try{table=(await json(`lookuptable.php?l=${team?.idLeague||4330}&s=${season}`)).table||[]}catch(e){console.warn(e.message)}
           fixtures.sort((a,b)=>`${a.dateEvent||''} ${a.strTime||''}`.localeCompare(`${b.dateEvent||''} ${b.strTime||''}`));
           const now=Date.now()-10800000,next=fixtures.find(e=>e.intHomeScore==null&&Date.parse(`${e.dateEvent}T${(e.strTime||'15:00:00').slice(0,8)}Z`)>=now)||fixtures.find(e=>e.intHomeScore==null)||null;
           let preview=null;if(next){const [homeTeam,awayTeam,homeRecent,awayRecent]=await Promise.all([json(`lookupteam.php?id=${next.idHomeTeam}`).then(x=>x.teams?.[0]||null).catch(()=>null),json(`lookupteam.php?id=${next.idAwayTeam}`).then(x=>x.teams?.[0]||null).catch(()=>null),json(`eventslast.php?id=${next.idHomeTeam}`).then(x=>x.results||[]).catch(()=>[]),json(`eventslast.php?id=${next.idAwayTeam}`).then(x=>x.results||[]).catch(()=>[])]);preview={event:next,homeTeam,awayTeam,homeRecent,awayRecent}}
-
           let transferNews=(previous.transferNews||[]).length?previous.transferNews:seedTransferNews;
           try{
             const queries=['Celtic transfer when:21d','Celtic signing when:21d','Celtic linked target bid when:21d'];
@@ -97,11 +72,10 @@ jobs:
             for(const q of queries){const xml=await html(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-GB&gl=GB&ceid=GB:en`),$news=cheerio.load(xml,{xmlMode:true});$news('item').each((_,item)=>{const node=$news(item),source=node.find('source').text().trim(),rawTitle=node.find('title').text().trim();if(!/(Celtic FC|BBC|Sky Sports|The Guardian|The Athletic|STV|The Herald|ESPN)/i.test(source)||!/celtic/i.test(rawTitle)||/women|women's/i.test(rawTitle))return;const suffix=` - ${source}`,title=rawTitle.toLowerCase().endsWith(suffix.toLowerCase())?rawTitle.slice(0,-suffix.length).trim():rawTitle.trim(),key=normalise(title);if(seen.has(key))return;seen.add(key);const lower=title.toLowerCase(),kind=/celtic fc/i.test(source)?'Official':/signs|signed|joins|joined|completes|completed|agrees|agreed|club-record|permanent switch/i.test(lower)?'Confirmed':/linked|target|interest|monitor|eyeing|want|rumour|could|bid|pursuing/i.test(lower)?'Speculation':'Report';items.push({title,url:node.find('link').text().trim(),source,publishedAt:new Date(node.find('pubDate').text().trim()).toISOString(),kind})})}
             const fresh=items.sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt)).slice(0,9);if(fresh.length)transferNews=fresh;
           }catch(e){console.warn('Transfer news:',e.message)}
-
           const leaguePublished=fixtures.filter(e=>String(e.idLeague||'')===String(team?.idLeague||4330)).length;
-          const data={generatedAt:new Date().toISOString(),season,team,fixtures,players,table,preview,transferNews,coverage:{competitions:[...competitions.entries()].map(([id,slug])=>({id,slug})),eventCount:fixtures.length,playerCount:players.length,leaguePublished,leagueTarget:SPFL_TOTAL}};
+          const data={generatedAt:new Date().toISOString(),season,team,fixtures,table,preview,transferNews,coverage:{competitions:[...competitions.entries()].map(([id,slug])=>({id,slug})),eventCount:fixtures.length,leaguePublished,leagueTarget:SPFL_TOTAL}};
           await fs.writeFile('data.json',JSON.stringify(data));
-          console.log(`Wrote ${fixtures.length} fixtures (${leaguePublished}/${SPFL_TOTAL} league), ${players.length} players and ${transferNews.length} transfer stories`);
+          console.log(`Wrote ${fixtures.length} fixtures (${leaguePublished}/${SPFL_TOTAL} league) and ${transferNews.length} transfer stories`);
           NODE
       - name: Publish refreshed data
         run: |
