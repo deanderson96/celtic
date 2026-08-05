@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#172B23">
-  <meta name="description" content="A professional Celtic FC information hub for fixtures, results, squad data, standings, European football and transfer news.">
+  <meta name="description" content="A professional Celtic FC information hub for fixtures, results, standings, European football and transfer news.">
   <title>Celtic FC Hub</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -21,7 +21,6 @@
         <a href="#fixtures">Fixtures</a>
         <a href="#transfers">Transfers</a>
         <a href="#table">Table</a>
-        <a href="#squad">Squad</a>
         <a href="europe.html">Europe</a>
       </nav>
       <div class="data-state"><span></span><b>Live data</b></div>
@@ -34,7 +33,7 @@
         <div>
           <div class="breadcrumbs"><span>Club dashboard</span><i>/</i><strong>2026–27 season</strong></div>
           <h1>Celtic performance centre</h1>
-          <p>Fixtures, results, league position, squad intelligence and credible transfer reporting in one operational view.</p>
+          <p>Fixtures, results, league position, match intelligence and credible transfer reporting in one operational view.</p>
         </div>
         <div class="header-actions">
           <a class="button secondary" href="europe.html">European campaign</a>
@@ -65,7 +64,7 @@
       <section class="metric-grid" aria-label="Season metrics">
         <article class="metric"><span>League coverage</span><strong id="fixture-summary">Loading…</strong><small>Published SPFL fixtures</small></article>
         <article class="metric"><span>League position</span><strong id="position-summary">Loading…</strong><small>Current table standing</small></article>
-        <article class="metric"><span>First-team squad</span><strong id="squad-summary">Loading…</strong><small>Official roster records</small></article>
+        <article class="metric"><span>All competitions</span><strong id="matches-summary">Loading…</strong><small>Published season matches</small></article>
         <article class="metric"><span>Data freshness</span><strong id="freshness-summary">Live</strong><small id="updated">Loading dataset…</small></article>
       </section>
 
@@ -134,17 +133,6 @@
           <div><p class="kicker">Scottish Premiership</p><h2>League table</h2><p class="panel-note" id="season-label"></p></div>
         </div>
         <div id="table-content"><div class="loading"><span></span><span></span><span></span></div></div>
-      </section>
-
-      <section class="panel squad-panel" id="squad">
-        <div class="panel-heading squad-heading">
-          <div><p class="kicker">First team</p><h2>Squad directory</h2><p class="panel-note" id="squad-count">Loading official roster…</p></div>
-          <div class="tools">
-            <input id="player-search" type="search" placeholder="Search player or position" aria-label="Search players">
-            <select id="position-filter" aria-label="Filter by position"><option value="">All positions</option></select>
-          </div>
-        </div>
-        <div id="squad-grid" class="players"><div class="loading"><span></span><span></span><span></span></div></div>
       </section>
     </div>
   </main>
