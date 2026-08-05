@@ -10,7 +10,6 @@ Live site: `https://deanderson96.github.io/celtic/`
 - Scottish Premiership coverage shown against the 38-match season total; the final five post-split games appear when officially published
 - Upcoming and completed fixture filters
 - Recent results
-- Full current first-team squad, grounded in Celtic's official squad page and enriched with TheSportsDB player data
 - Next-match preview with both team badges, league positions, recent results, venue and latest meeting
 - All kickoff times displayed in Europe/London time, including BST
 - Subtle highlighting for matches at Celtic Park
@@ -21,9 +20,9 @@ Live site: `https://deanderson96.github.io/celtic/`
 
 ## Data refresh
 
-The site is served as plain HTML, CSS, JavaScript and JSON from `main`; no build process is required. A scheduled GitHub Action refreshes `data.json` every day from TheSportsDB, Celtic's official squad page and a curated transfer-news feed. GitHub Pages republishes automatically after the generated data is committed.
+The site is served as plain HTML, CSS, JavaScript and JSON from `main`; no build process is required. A scheduled GitHub Action refreshes `data.json` every day from TheSportsDB and a curated transfer-news feed. GitHub Pages republishes automatically after the generated data is committed.
 
-The browser also has a direct TheSportsDB v1 API fallback, so core team, fixture, squad and table information can still appear when a generated refresh is unavailable.
+The browser also has a direct TheSportsDB v1 API fallback, so core team, fixture and table information can still appear when a generated refresh is unavailable.
 
 ## Files
 
@@ -32,7 +31,7 @@ The browser also has a direct TheSportsDB v1 API fallback, so core team, fixture
 - `styles.css` — shared responsive design
 - `app.js` — main-page data and rendering logic
 - `europe.js` — European fixture filtering
-- `data.json` — generated season, squad, preview and transfer-news data
+- `data.json` — generated season, preview and transfer-news data
 - `.github/workflows/refresh-data.yml` — daily data refresh
 
 ## Disclaimer
