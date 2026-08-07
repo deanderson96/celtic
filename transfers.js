@@ -15,22 +15,22 @@ const speculation=[
   {
     category:'Potential departure',
     player:'Alistair Johnston',
-    previousStatus:'Everton interest was credible, but reports of an imminent deal were not supported by a formal bid.',
-    latestUpdate:'Everton continue to monitor Johnston and have held contact, but are also pursuing Atlético Madrid right-back Nahuel Molina. No formal Johnston bid has been reported.',
+    previousStatus:'Everton were interested, but no formal bid had been reported and the move remained uncertain.',
+    latestUpdate:'Johnston has reportedly told Celtic he wants to pursue a Premier League move. Everton remain the leading suitor, while Celtic are reluctant to sell before the Champions League play-off and are reported to value him at around £15m–£20m.',
     confidence:'Medium',
-    updated:'5 Aug 2026',
+    updated:'6 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16643259/alistair-johnston-celtic-future-everton-transfer-talks/'
+    url:'https://www.thescottishsun.co.uk/sport/16649036/alistair-johnston-wants-celtic-exit-premier-league/'
   },
   {
     category:'Incoming target',
     player:'Haissem Hassan',
-    previousStatus:'Celtic remained interested after Hassan rejected a Saudi offer.',
-    latestUpdate:'Hassan has reportedly agreed personal terms with Marseille. Marseille still need a club-to-club agreement, but Celtic’s chances have materially decreased.',
+    previousStatus:'Reports had indicated Hassan agreed personal terms with Marseille, making Celtic outsiders.',
+    latestUpdate:'Celtic are now reported to be very close to a deal with Real Oviedo, with Hassan preferring the Celtic move and negotiations advanced around a package worth roughly £9m–£9.5m. The transfer is not yet official.',
     confidence:'Medium–High',
-    updated:'5 Aug 2026',
+    updated:'7 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16646267/celtic-transfer-target-agrees-rival-club-deal/'
+    url:'https://www.thescottishsun.co.uk/sport/16650981/celtic-close-signing-winger-blockbuster-transfer/'
   },
   {
     category:'Incoming target',
@@ -61,6 +61,16 @@ const speculation=[
     updated:'5 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16644244/celtic-west-ham-arne-engels-bid-transfer-latest/'
+  },
+  {
+    category:'Potential departure',
+    player:'Dane Murray',
+    previousStatus:'No active departure was being tracked.',
+    latestUpdate:'Celtic have reportedly rejected Dundee’s request to take Murray on loan, materially reducing the likelihood of a short-term exit and indicating they currently intend to retain him.',
+    confidence:'Medium–High',
+    updated:'5 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16645908/celtic-rebuff-star-approach-premiership-rivals/'
   }
 ];
 
