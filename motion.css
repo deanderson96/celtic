@@ -1,0 +1,60 @@
+/* Motion layer: progressive enhancement for the static GitHub Pages dashboard. */
+:root{--motion-ease:cubic-bezier(.2,.8,.2,1);--motion-spring:cubic-bezier(.16,1,.3,1)}
+body{overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-2px;z-index:9999;pointer-events:none;background:linear-gradient(135deg,#0f1d18 0%,#172b23 48%,#1cab62 130%);transform:translateY(-105%);animation:motion-curtain-out .95s var(--motion-spring) both}
+@keyframes motion-curtain-out{0%{transform:translateY(0)}100%{transform:translateY(-105%)}}
+body.motion-leaving{overflow:hidden}
+body.motion-leaving::before{animation:none;transform:translateY(0);transition:transform .55s var(--motion-ease)}
+
+.topbar{transition:background-color .35s ease,box-shadow .35s ease,border-color .35s ease,transform .5s var(--motion-spring)}
+body.motion-scrolled .topbar{background:rgba(10,23,18,.985);border-color:rgba(255,255,255,.13);box-shadow:0 12px 38px rgba(0,0,0,.24)}
+.brand,.links,.data-state,.menu{animation:motion-nav-in .7s var(--motion-spring) both}
+.links{animation-delay:.08s}.data-state,.menu{animation-delay:.14s}
+@keyframes motion-nav-in{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+
+.page-header{position:relative;isolation:isolate;overflow:hidden}
+.page-header::after{content:"";position:absolute;z-index:-1;width:48vw;height:48vw;min-width:420px;min-height:420px;right:-18vw;top:-34vw;border:1px solid rgba(66,216,134,.13);border-radius:50%;box-shadow:0 0 0 90px rgba(66,216,134,.025),0 0 0 180px rgba(66,216,134,.018);animation:motion-orbit 16s linear infinite}
+.page-header-grid>div:first-child{animation:motion-hero-in .9s .08s var(--motion-spring) both}.header-actions{animation:motion-hero-in .9s .2s var(--motion-spring) both}
+@keyframes motion-hero-in{from{opacity:0;transform:translateY(28px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes motion-orbit{to{transform:rotate(360deg)}}
+
+.motion-reveal{opacity:0;transform:translateY(30px) scale(.988);filter:blur(7px);transition:opacity .72s var(--motion-ease),transform .9s var(--motion-spring),filter .8s ease;transition-delay:var(--motion-delay,0ms);will-change:transform,opacity,filter}
+.motion-reveal.is-visible{opacity:1;transform:none;filter:blur(0)}
+.motion-item{opacity:0;transform:translateY(12px);transition:opacity .48s ease,transform .65s var(--motion-spring);transition-delay:var(--motion-delay,0ms)}
+.motion-item.is-visible{opacity:1;transform:none}
+
+.panel,.metric{transition:border-color .32s ease,box-shadow .38s ease,transform .45s var(--motion-spring),background-color .32s ease}
+@media(hover:hover) and (pointer:fine){
+  .panel:hover{border-color:rgba(66,216,134,.2);box-shadow:0 22px 55px rgba(0,0,0,.2);transform:translateY(-3px)}
+  .metric:hover{border-color:rgba(66,216,134,.24);box-shadow:0 15px 34px rgba(0,0,0,.18);transform:translateY(-4px)}
+  .button,.links a,.text-button,.segmented button,.news-item a{transition:transform .28s var(--motion-spring),background-color .25s ease,color .25s ease,border-color .25s ease,opacity .25s ease}
+  .button:hover{transform:translateY(-2px)}
+  .links a:hover{transform:translateY(-1px)}
+  .news-item{transition:padding-left .35s var(--motion-spring),background-color .3s ease}
+  .news-item:hover{padding-left:10px;background:linear-gradient(90deg,rgba(66,216,134,.045),transparent 70%)}
+  .data-table tbody tr{transition:background-color .3s ease,box-shadow .3s ease,transform .35s var(--motion-spring)}
+  .data-table tbody tr:hover{transform:translateX(3px);background-color:rgba(255,255,255,.025)}
+  .data-table tbody tr.home-match:hover{background:linear-gradient(90deg,rgba(66,216,134,.115),transparent 44%)}
+}
+
+.preview-vs,.europe-vs{animation:motion-vs-breathe 3.2s ease-in-out infinite}
+@keyframes motion-vs-breathe{0%,100%{box-shadow:0 0 0 0 rgba(66,216,134,0)}50%{box-shadow:0 0 0 9px rgba(66,216,134,.055)}}
+.badge-shell img,.preview-team img,.europe-team img{transition:transform .55s var(--motion-spring),filter .4s ease}
+@media(hover:hover) and (pointer:fine){.club-overview:hover .badge-shell img,.preview-team:hover img,.europe-team:hover img{transform:scale(1.055) rotate(-1.5deg);filter:drop-shadow(0 10px 16px rgba(0,0,0,.18))}}
+
+.progress span{position:relative;overflow:hidden}
+.progress span::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent);transform:translateX(-120%);animation:motion-progress-shine 3s 1.2s ease-in-out infinite}
+@keyframes motion-progress-shine{0%,55%{transform:translateX(-120%)}85%,100%{transform:translateX(120%)}}
+
+.status.show{animation:motion-status-in .5s var(--motion-spring) both}
+@keyframes motion-status-in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+
+.loading{transition:opacity .3s ease}.score,.result-score,.status-chip,.venue-chip,.news-label,.panel-badge,.pill{transition:transform .3s var(--motion-spring),background-color .3s ease,color .3s ease}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  body::before,.brand,.links,.data-state,.menu,.page-header-grid>div:first-child,.header-actions,.page-header::after,.preview-vs,.europe-vs,.progress span::after{animation:none!important}
+  body::before{display:none}
+  .motion-reveal,.motion-item{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+  .panel,.metric,.button,.links a,.text-button,.segmented button,.news-item,.data-table tbody tr,.badge-shell img,.preview-team img,.europe-team img{transition:none!important;transform:none!important}
+}
