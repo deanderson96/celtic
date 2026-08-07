@@ -55,12 +55,12 @@ const speculation=[
   {
     category:'Incoming target',
     player:'Farès Ghedjemis',
-    previousStatus:'Celtic interest had developed into an active pursuit.',
-    latestUpdate:'Celtic’s opening bid has reportedly been rejected by Frosinone. The player remains a target, but valuation and rival interest are obstacles.',
+    previousStatus:'Celtic had an opening bid rejected by Frosinone but remained actively interested.',
+    latestUpdate:'Celtic now appear to be prioritising Haissem Hassan for the right-wing role, with Hassan viewed as the more attainable deal. Ghedjemis remains on the wider target list, but the likelihood of Celtic pushing this deal immediately has decreased.',
     confidence:'Medium–High',
-    updated:'5 Aug 2026',
+    updated:'7 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16644244/celtic-west-ham-arne-engels-bid-transfer-latest/'
+    url:'https://www.thescottishsun.co.uk/sport/16651499/celtic-transfer-special-kuhn-replacement-alistair-johnston-hassan/'
   },
   {
     category:'Potential departure',
