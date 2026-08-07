@@ -1,0 +1,163 @@
+name: Enrich SPFL table details
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/enrich-table.yml']
+  workflow_run:
+    workflows: ['Refresh Celtic season data']
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: enrich-celtic-table
+  cancel-in-progress: true
+
+jobs:
+  enrich:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install HTML parser
+        run: npm install --no-save cheerio@1.0.0
+      - name: Enrich standings with WDL and form
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs/promises';
+          import * as cheerio from 'cheerio';
+
+          const API='https://www.thesportsdb.com/api/v1/json/123';
+          const SPFL_CLUBS=12;
+          const clean=value=>String(value??'').replace(/\s+/g,' ').trim();
+          const normalise=value=>clean(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+          const integer=value=>{const n=Number.parseInt(String(value??'').replace(/[^0-9-]/g,''),10);return Number.isFinite(n)?n:null};
+          const asString=value=>value==null?'':String(value);
+          const data=JSON.parse(await fs.readFile('data.json','utf8'));
+          const officialRows=Array.isArray(data.table)?data.table:[];
+          if(officialRows.length!==SPFL_CLUBS)throw new Error(`Expected ${SPFL_CLUBS} SPFL rows, found ${officialRows.length}`);
+
+          async function fetchText(url){const r=await fetch(url,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${url}: ${r.status}`);return r.text()}
+          async function fetchJson(url){const r=await fetch(url,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${url}: ${r.status}`);return r.json()}
+
+          function parseBbc(markup){
+            const $=cheerio.load(markup);
+            const parsed=[];
+            $('table').each((_,tableEl)=>{
+              const table=$(tableEl);
+              const headerCells=table.find('thead tr').last().find('th,td');
+              const headers=headerCells.map((__,cell)=>clean($(cell).text()).toLowerCase()).get();
+              const findIndex=patterns=>headers.findIndex(label=>patterns.some(pattern=>pattern.test(label)));
+              const idxTeam=findIndex([/^team/,/^club/]);
+              const idxPlayed=findIndex([/^pld/,/^played/,/^gp$/,/^p$/]);
+              const idxWin=findIndex([/^w$/,/^won/,/^wins/]);
+              const idxDraw=findIndex([/^d$/,/^draw/,/^ties/]);
+              const idxLoss=findIndex([/^l$/,/^lost/,/^loss/]);
+              const idxGd=findIndex([/^gd$/,/^goal difference/]);
+              const idxPts=findIndex([/^pts/,/^points$/,/^p$/]);
+              const idxForm=findIndex([/^form/]);
+              if(idxPlayed<0||idxWin<0||idxDraw<0||idxLoss<0||idxPts<0)return;
+              table.find('tbody tr').each((__,rowEl)=>{
+                const cells=$(rowEl).find('th,td');
+                if(!cells.length)return;
+                const texts=cells.map((___,cell)=>clean($(cell).text())).get();
+                let team=idxTeam>=0?texts[idxTeam]:'';
+                if(!team){
+                  team=$(rowEl).find('a').map((___,a)=>clean($(a).text())).get().find(Boolean)||'';
+                }
+                if(!team){
+                  team=$(rowEl).find('img[alt]').map((___,img)=>clean($(img).attr('alt'))).get().find(Boolean)||'';
+                }
+                if(!team)return;
+                const formSource=idxForm>=0?texts[idxForm]:texts[texts.length-1];
+                const form=(String(formSource||'').toUpperCase().match(/[WDL]/g)||[]).join('').slice(-5);
+                parsed.push({
+                  name:team,strTeam:team,
+                  intPlayed:asString(integer(texts[idxPlayed])),
+                  intWin:asString(integer(texts[idxWin])),
+                  intDraw:asString(integer(texts[idxDraw])),
+                  intLoss:asString(integer(texts[idxLoss])),
+                  intGoalDifference:idxGd>=0?asString(integer(texts[idxGd])):'',
+                  intPoints:asString(integer(texts[idxPts])),
+                  strForm:form
+                });
+              });
+            });
+            return parsed;
+          }
+
+          function inferOpeningRecord(row){
+            const played=integer(row.intPlayed),points=integer(row.intPoints);
+            if(played===0)return {intWin:'0',intDraw:'0',intLoss:'0',strForm:''};
+            if(played!==1||points==null)return null;
+            if(points===3)return {intWin:'1',intDraw:'0',intLoss:'0',strForm:'W'};
+            if(points===1)return {intWin:'0',intDraw:'1',intLoss:'0',strForm:'D'};
+            if(points===0)return {intWin:'0',intDraw:'0',intLoss:'1',strForm:'L'};
+            return null;
+          }
+
+          let bbcRows=[];
+          try{
+            bbcRows=parseBbc(await fetchText('https://www.bbc.co.uk/sport/football/scottish-premiership/table'));
+            console.log(`BBC table candidates: ${bbcRows.length}`);
+          }catch(error){console.warn('BBC standings:',error.message)}
+
+          let apiRows=[];
+          try{
+            const season=data.season||'';
+            apiRows=(await fetchJson(`${API}/lookuptable.php?l=4330&s=${encodeURIComponent(season)}`)).table||[];
+            console.log(`TheSportsDB table rows: ${apiRows.length}`);
+          }catch(error){console.warn('TheSportsDB standings:',error.message)}
+
+          const bbcByName=new Map(bbcRows.map(row=>[normalise(row.name||row.strTeam),row]));
+          const apiByName=new Map(apiRows.map(row=>[normalise(row.name||row.strTeam),row]));
+          let matchedBbc=0;
+          const enriched=officialRows.map(row=>{
+            const key=normalise(row.name||row.strTeam);
+            const bbc=bbcByName.get(key);
+            const api=apiByName.get(key);
+            const played=integer(row.intPlayed),points=integer(row.intPoints);
+            const bbcMatches=bbc&&integer(bbc.intPlayed)===played&&integer(bbc.intPoints)===points;
+            if(bbcMatches)matchedBbc++;
+            const source=bbcMatches?bbc:api;
+            const opening=inferOpeningRecord(row);
+            const pick=(field)=>{
+              const value=source?.[field];
+              if(value!==undefined&&value!==null&&String(value)!=='')return asString(value);
+              const existing=row?.[field];
+              if(existing!==undefined&&existing!==null&&String(existing)!=='')return asString(existing);
+              return opening?.[field]??'';
+            };
+            const form=bbcMatches&&bbc.strForm?bbc.strForm:(api?.strForm||row.strForm||opening?.strForm||'');
+            return {...row,intWin:pick('intWin'),intDraw:pick('intDraw'),intLoss:pick('intLoss'),strForm:String(form).toUpperCase().replace(/[^WDL]/g,'').slice(-5)};
+          });
+
+          const missing=enriched.filter(row=>[row.intWin,row.intDraw,row.intLoss].some(value=>value==='')).map(row=>row.name||row.strTeam);
+          if(missing.length)throw new Error(`WDL still missing for: ${missing.join(', ')}`);
+          console.log(`BBC rows matched current official standings: ${matchedBbc}/${SPFL_CLUBS}`);
+          console.log('WDL coverage: 12/12 clubs');
+          console.log(`Form coverage: ${enriched.filter(row=>row.strForm).length}/${SPFL_CLUBS} clubs`);
+          data.table=enriched;
+          data.coverage={...(data.coverage||{}),tableTeams:enriched.length,tableTarget:SPFL_CLUBS,wdlTeams:enriched.length,formTeams:enriched.filter(row=>row.strForm).length};
+          await fs.writeFile('data.json',JSON.stringify(data));
+          NODE
+      - name: Publish enriched table
+        run: |
+          cp data.json /tmp/celtic-data.json
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/celtic-data.json data.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Enrich SPFL WDL and form data"
+          git push origin HEAD:main
