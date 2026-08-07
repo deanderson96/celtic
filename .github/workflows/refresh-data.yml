@@ -33,7 +33,9 @@ jobs:
           const API='https://www.thesportsdb.com/api/v1/json/123';
           const TEAM_ID='133647';
           const SPFL_TOTAL=38;
+          const SPFL_CLUBS=12;
           const delay=ms=>new Promise(r=>setTimeout(r,ms));
+          const clean=value=>String(value||'').replace(/\s+/g,' ').trim();
           const normalise=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
           const currentSeason=()=>{const d=new Date(),y=d.getUTCFullYear();return d.getUTCMonth()>=6?`${y}-${y+1}`:`${y-1}-${y}`};
           const seedTransferNews=[
@@ -47,6 +49,46 @@ jobs:
           async function json(path){const r=await fetch(`${API}/${path}`,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${path}: ${r.status}`);return r.json()}
           async function html(url){const r=await fetch(url,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${url}: ${r.status}`);return r.text()}
           async function lookupMany(ids,endpoint,key){const out=[];for(const id of ids){try{const data=await json(`${endpoint}?id=${id}`),item=(data[key]||[])[0];if(item)out.push(item)}catch(e){console.warn(e.message)}await delay(2150)}return out}
+          async function officialSpflTable(){
+            const markup=await html('https://spfl.co.uk/league/premiership/table');
+            const $=cheerio.load(markup);
+            let best=[];
+            $('table').each((_,tableEl)=>{
+              const tableNode=$(tableEl);
+              const headers=tableNode.find('thead tr').last().find('th,td').map((__,cell)=>clean($(cell).text()).toLowerCase()).get();
+              const findIndex=patterns=>headers.findIndex(label=>patterns.some(pattern=>pattern.test(label)));
+              const idxPos=findIndex([/^pos/,/^#$/]);
+              const idxTeam=findIndex([/^team/,/^club/]);
+              const idxPlayed=findIndex([/^pld/,/^played/,/^p$/]);
+              const idxWin=findIndex([/^w$/,/^won/]);
+              const idxDraw=findIndex([/^d$/,/^draw/]);
+              const idxLoss=findIndex([/^l$/,/^lost/]);
+              const idxGd=findIndex([/^gd$/,/^goal difference/]);
+              const idxPts=findIndex([/^pts/,/^points/]);
+              const rows=[];
+              tableNode.find('tbody tr').each((__,rowEl)=>{
+                const cells=$(rowEl).find('th,td').map((___,cell)=>clean($(cell).text())).get();
+                if(cells.length<5)return;
+                const posCell=cells[idxPos>=0?idxPos:0];
+                const teamCell=cells[idxTeam>=0?idxTeam:1];
+                const rank=Number.parseInt(posCell,10);
+                if(!Number.isFinite(rank)||!teamCell)return;
+                const value=(index,fallback='')=>index>=0&&cells[index]!=null?cells[index]:fallback;
+                const played=value(idxPlayed,cells[2]||'');
+                const gd=value(idxGd,cells.length===5?cells[3]:'');
+                const pts=value(idxPts,cells.length===5?cells[4]:cells[cells.length-1]);
+                rows.push({
+                  intRank:String(rank),intPosition:String(rank),name:teamCell,strTeam:teamCell,
+                  intPlayed:played,intWin:value(idxWin,''),intDraw:value(idxDraw,''),intLoss:value(idxLoss,''),
+                  intGoalDifference:gd,intPoints:pts,strForm:''
+                });
+              });
+              if(rows.some(row=>/^celtic$/i.test(row.name))&&rows.length>best.length)best=rows;
+            });
+            best=best.sort((a,b)=>Number(a.intRank)-Number(b.intRank)).slice(0,SPFL_CLUBS);
+            if(best.length!==SPFL_CLUBS)throw new Error(`Official SPFL table returned ${best.length}/${SPFL_CLUBS} clubs`);
+            return best;
+          }
           let previous={};try{previous=JSON.parse(await fs.readFile('data.json','utf8'))}catch{}
           const season=currentSeason();
           const team=(await json(`lookupteam.php?id=${TEAM_ID}`)).teams?.[0]||null;
@@ -61,7 +103,17 @@ jobs:
           for(const [leagueId,slug] of competitions){try{const url=`https://www.thesportsdb.com/season/${leagueId}-${slug}/${season}%26t%3D${TEAM_ID}-celtic`;collectEvents(await html(url));console.log('Competition',leagueId,slug)}catch(e){console.warn(e.message)}await delay(700)}
           if(!eventIds.size){for(const leagueId of competitions.keys()){try{const data=await json(`eventsseason.php?id=${leagueId}&s=${season}`);for(const e of data.events||[])if(String(e.idHomeTeam)===TEAM_ID||String(e.idAwayTeam)===TEAM_ID)eventIds.add(e.idEvent)}catch(e){console.warn(e.message)}}}
           const fixtures=await lookupMany([...eventIds],'lookupevent.php','events');
-          let table=[];try{table=(await json(`lookuptable.php?l=${team?.idLeague||4330}&s=${season}`)).table||[]}catch(e){console.warn(e.message)}
+          let apiTable=[];try{apiTable=(await json(`lookuptable.php?l=${team?.idLeague||4330}&s=${season}`)).table||[]}catch(e){console.warn(e.message)}
+          let table=[];
+          try{
+            const official=await officialSpflTable();
+            const apiByName=new Map(apiTable.map(row=>[normalise(row.name||row.strTeam),row]));
+            table=official.map(row=>({...apiByName.get(normalise(row.name)),...row}));
+            console.log(`Loaded official SPFL table: ${table.length}/${SPFL_CLUBS} clubs`);
+          }catch(e){
+            console.warn('Official SPFL table:',e.message);
+            table=(previous.table||[]).length===SPFL_CLUBS?previous.table:apiTable;
+          }
           fixtures.sort((a,b)=>`${a.dateEvent||''} ${a.strTime||''}`.localeCompare(`${b.dateEvent||''} ${b.strTime||''}`));
           const now=Date.now()-10800000,next=fixtures.find(e=>e.intHomeScore==null&&Date.parse(`${e.dateEvent}T${(e.strTime||'15:00:00').slice(0,8)}Z`)>=now)||fixtures.find(e=>e.intHomeScore==null)||null;
           let preview=null;if(next){const [homeTeam,awayTeam,homeRecent,awayRecent]=await Promise.all([json(`lookupteam.php?id=${next.idHomeTeam}`).then(x=>x.teams?.[0]||null).catch(()=>null),json(`lookupteam.php?id=${next.idAwayTeam}`).then(x=>x.teams?.[0]||null).catch(()=>null),json(`eventslast.php?id=${next.idHomeTeam}`).then(x=>x.results||[]).catch(()=>[]),json(`eventslast.php?id=${next.idAwayTeam}`).then(x=>x.results||[]).catch(()=>[])]);preview={event:next,homeTeam,awayTeam,homeRecent,awayRecent}}
@@ -73,9 +125,9 @@ jobs:
             const fresh=items.sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt)).slice(0,9);if(fresh.length)transferNews=fresh;
           }catch(e){console.warn('Transfer news:',e.message)}
           const leaguePublished=fixtures.filter(e=>String(e.idLeague||'')===String(team?.idLeague||4330)).length;
-          const data={generatedAt:new Date().toISOString(),season,team,fixtures,table,preview,transferNews,coverage:{competitions:[...competitions.entries()].map(([id,slug])=>({id,slug})),eventCount:fixtures.length,leaguePublished,leagueTarget:SPFL_TOTAL}};
+          const data={generatedAt:new Date().toISOString(),season,team,fixtures,table,preview,transferNews,coverage:{competitions:[...competitions.entries()].map(([id,slug])=>({id,slug})),eventCount:fixtures.length,leaguePublished,leagueTarget:SPFL_TOTAL,tableTeams:table.length,tableTarget:SPFL_CLUBS}};
           await fs.writeFile('data.json',JSON.stringify(data));
-          console.log(`Wrote ${fixtures.length} fixtures (${leaguePublished}/${SPFL_TOTAL} league) and ${transferNews.length} transfer stories`);
+          console.log(`Wrote ${fixtures.length} fixtures (${leaguePublished}/${SPFL_TOTAL} league), ${table.length}/${SPFL_CLUBS} table clubs and ${transferNews.length} transfer stories`);
           NODE
       - name: Publish refreshed data
         run: |
