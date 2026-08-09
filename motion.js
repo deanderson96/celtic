@@ -3,6 +3,18 @@
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const revealSelector='.club-overview,.metric-grid,.preview-panel,.side-stack,.fixtures-panel,.transfer-panel,.table-panel,.europe-summary-panel,.europe-fixtures-panel,.europe-metrics';
 const itemSelector='.result-row,.news-item,.data-table tbody tr,.europe-match';
+const DATA_REFRESH_MS=60*60*1000;
+let lastDataRefresh=Date.now();
+
+function refreshVisibleData(){
+  if(document.visibilityState!=='visible'||Date.now()-lastDataRefresh<DATA_REFRESH_MS)return;
+  lastDataRefresh=Date.now();
+  const refreshButton=document.getElementById('refresh');
+  if(refreshButton&&!refreshButton.disabled)refreshButton.click();
+  else location.reload();
+}
+setInterval(refreshVisibleData,DATA_REFRESH_MS);
+document.addEventListener('visibilitychange',refreshVisibleData);
 
 function setScrollState(){document.body.classList.toggle('motion-scrolled',window.scrollY>18)}
 setScrollState();
