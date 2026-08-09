@@ -5,16 +5,82 @@ const revealSelector='.club-overview,.metric-grid,.preview-panel,.side-stack,.fi
 const itemSelector='.result-row,.news-item,.data-table tbody tr,.europe-match';
 const DATA_REFRESH_MS=60*60*1000;
 let lastDataRefresh=Date.now();
+let datasetUpdatedAt=null;
+
+function formatUpdatedTime(value){
+  const date=new Date(value);
+  if(Number.isNaN(date.valueOf()))return null;
+  return new Intl.DateTimeFormat('en-GB',{
+    timeZone:'Europe/London',
+    hour:'2-digit',
+    minute:'2-digit',
+    timeZoneName:'short'
+  }).format(date);
+}
+
+function formatUpdatedFull(value){
+  const date=new Date(value);
+  if(Number.isNaN(date.valueOf()))return '';
+  return new Intl.DateTimeFormat('en-GB',{
+    timeZone:'Europe/London',
+    weekday:'short',
+    day:'numeric',
+    month:'short',
+    year:'numeric',
+    hour:'2-digit',
+    minute:'2-digit',
+    second:'2-digit',
+    timeZoneName:'short'
+  }).format(date);
+}
+
+function renderDataTimestamp(){
+  const state=document.querySelector('.data-state');
+  const label=state?.querySelector('b');
+  if(!state||!label||!datasetUpdatedAt)return;
+  const short=formatUpdatedTime(datasetUpdatedAt);
+  if(!short)return;
+  label.textContent=`Updated ${short}`;
+  const full=formatUpdatedFull(datasetUpdatedAt);
+  state.title=`Football data last updated ${full}`;
+  state.setAttribute('aria-label',`Football data last updated ${full}`);
+}
+
+async function syncDataTimestamp(){
+  try{
+    const response=await fetch(`data.json?v=${Date.now()}`,{cache:'no-store'});
+    if(!response.ok)throw new Error('Data unavailable');
+    const data=await response.json();
+    const updated=new Date(data.generatedAt);
+    if(Number.isNaN(updated.valueOf()))return;
+    datasetUpdatedAt=updated.toISOString();
+    renderDataTimestamp();
+  }catch(_){
+    const label=document.querySelector('.data-state b');
+    if(label&&!datasetUpdatedAt)label.textContent='Live data';
+  }
+}
 
 function refreshVisibleData(){
   if(document.visibilityState!=='visible'||Date.now()-lastDataRefresh<DATA_REFRESH_MS)return;
   lastDataRefresh=Date.now();
   const refreshButton=document.getElementById('refresh');
-  if(refreshButton&&!refreshButton.disabled)refreshButton.click();
-  else location.reload();
+  if(refreshButton&&!refreshButton.disabled){
+    refreshButton.click();
+    window.setTimeout(syncDataTimestamp,1800);
+  }else{
+    location.reload();
+  }
 }
+
+syncDataTimestamp();
 setInterval(refreshVisibleData,DATA_REFRESH_MS);
-document.addEventListener('visibilitychange',refreshVisibleData);
+document.addEventListener('visibilitychange',()=>{
+  refreshVisibleData();
+  if(document.visibilityState==='visible')syncDataTimestamp();
+});
+const refreshButton=document.getElementById('refresh');
+refreshButton?.addEventListener('click',()=>window.setTimeout(syncDataTimestamp,1800));
 
 function setScrollState(){document.body.classList.toggle('motion-scrolled',window.scrollY>18)}
 setScrollState();
