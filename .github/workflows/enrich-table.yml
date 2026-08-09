@@ -48,6 +48,23 @@ jobs:
           async function fetchText(url){const r=await fetch(url,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${url}: ${r.status}`);return r.text()}
           async function fetchJson(url){const r=await fetch(url,{headers:{'User-Agent':'celtic-fc-hub/1.0'}});if(!r.ok)throw new Error(`${url}: ${r.status}`);return r.json()}
 
+          function deDuplicateTeam(value){
+            const text=clean(value);
+            const words=text.split(/\s+/).filter(Boolean);
+            if(words.length>=2&&words.length%2===0){
+              const half=words.length/2;
+              const first=words.slice(0,half).join(' '),second=words.slice(half).join(' ');
+              if(normalise(first)===normalise(second))return first;
+            }
+            const compact=normalise(text);
+            if(compact.length%2===0&&compact.slice(0,compact.length/2)===compact.slice(compact.length/2)){
+              const target=compact.slice(0,compact.length/2);
+              const known=officialRows.find(row=>normalise(row.name||row.strTeam)===target);
+              if(known)return known.name||known.strTeam;
+            }
+            return text;
+          }
+
           function parseBbc(markup){
             const $=cheerio.load(markup);
             const parsed=[];
@@ -73,6 +90,7 @@ jobs:
                 let team=idxTeam>=0?texts[idxTeam]:'';
                 if(!team)team=$(rowEl).find('a').map((___,a)=>clean($(a).text())).get().find(Boolean)||'';
                 if(!team)team=$(rowEl).find('img[alt]').map((___,img)=>clean($(img).attr('alt'))).get().find(Boolean)||'';
+                team=deDuplicateTeam(team);
                 if(!team)return;
                 const formSource=idxForm>=0?texts[idxForm]:texts[texts.length-1];
                 const form=(String(formSource||'').toUpperCase().match(/[WDL]/g)||[]).join('').slice(-5);
@@ -93,6 +111,29 @@ jobs:
             return parsed;
           }
 
+          const aliases={
+            heartofmidlothian:['heartofmidlothian','hearts'],
+            dundeeunited:['dundeeunited','dundeeutd'],
+            stjohnstone:['stjohnstone','saintjohnstone'],
+            stmirren:['stmirren','saintmirren']
+          };
+          function clubKeys(value){const key=normalise(value);return aliases[key]||[key]}
+          function findBbcRow(rows,value){
+            const keys=clubKeys(value);
+            for(const key of keys){
+              const exact=rows.find(row=>{const candidate=normalise(row.name||row.strTeam);return candidate===key||candidate===key+key});
+              if(exact)return exact;
+            }
+            const scored=[];
+            for(const row of rows){
+              const candidate=normalise(row.name||row.strTeam);
+              for(const key of keys){
+                if(candidate.includes(key))scored.push({row,score:candidate.length-key.length});
+              }
+            }
+            return scored.sort((a,b)=>a.score-b.score)[0]?.row||null;
+          }
+
           function inferOpeningRecord(row){
             const played=integer(row.intPlayed),points=integer(row.intPoints);
             if(played===0)return {intWin:'0',intDraw:'0',intLoss:'0',strForm:''};
@@ -107,6 +148,7 @@ jobs:
           try{
             bbcRows=parseBbc(await fetchText('https://www.bbc.co.uk/sport/football/scottish-premiership/table'));
             console.log(`BBC table candidates: ${bbcRows.length}`);
+            console.log(`BBC teams: ${bbcRows.map(row=>row.name).join(' | ')}`);
           }catch(error){console.warn('BBC standings:',error.message)}
 
           let apiRows=[];
@@ -116,12 +158,11 @@ jobs:
             console.log(`TheSportsDB table rows: ${apiRows.length}`);
           }catch(error){console.warn('TheSportsDB standings:',error.message)}
 
-          const bbcByName=new Map(bbcRows.map(row=>[normalise(row.name||row.strTeam),row]));
           const apiByName=new Map(apiRows.map(row=>[normalise(row.name||row.strTeam),row]));
           let matchedBbc=0;
           const enriched=officialRows.map(row=>{
             const key=normalise(row.name||row.strTeam);
-            const bbc=bbcByName.get(key);
+            const bbc=findBbcRow(bbcRows,row.name||row.strTeam);
             const api=apiByName.get(key);
             if(bbc)matchedBbc++;
             const opening=inferOpeningRecord(bbc||row);
@@ -147,13 +188,17 @@ jobs:
             };
           });
 
-          const missing=enriched.filter(row=>[row.intWin,row.intDraw,row.intLoss].some(value=>value==='')).map(row=>row.name||row.strTeam);
-          if(missing.length)throw new Error(`WDL still missing for: ${missing.join(', ')}`);
+          const wdlCount=enriched.filter(row=>row.intWin!==''&&row.intDraw!==''&&row.intLoss!=='').length;
+          const playedCount=enriched.filter(row=>integer(row.intPlayed)>0).length;
+          const formCount=enriched.filter(row=>row.strForm||integer(row.intPlayed)===0).length;
+          if(wdlCount!==SPFL_CLUBS)throw new Error(`WDL coverage ${wdlCount}/${SPFL_CLUBS}`);
+          if(matchedBbc!==SPFL_CLUBS)throw new Error(`BBC club matching ${matchedBbc}/${SPFL_CLUBS}`);
+          if(formCount!==SPFL_CLUBS)throw new Error(`Form coverage ${formCount}/${SPFL_CLUBS}`);
           console.log(`BBC rows matched by club name: ${matchedBbc}/${SPFL_CLUBS}`);
-          console.log(`WDL coverage: ${enriched.filter(row=>row.intWin!==''&&row.intDraw!==''&&row.intLoss!=='').length}/${SPFL_CLUBS} clubs`);
-          console.log(`Form coverage: ${enriched.filter(row=>row.strForm).length}/${SPFL_CLUBS} clubs`);
+          console.log(`WDL coverage: ${wdlCount}/${SPFL_CLUBS} clubs`);
+          console.log(`Form coverage: ${formCount}/${SPFL_CLUBS} clubs (${playedCount} have played)`);
           data.table=enriched;
-          data.coverage={...(data.coverage||{}),tableTeams:enriched.length,tableTarget:SPFL_CLUBS,wdlTeams:enriched.filter(row=>row.intWin!==''&&row.intDraw!==''&&row.intLoss!=='').length,formTeams:enriched.filter(row=>row.strForm).length};
+          data.coverage={...(data.coverage||{}),tableTeams:enriched.length,tableTarget:SPFL_CLUBS,wdlTeams:wdlCount,formTeams:formCount};
           await fs.writeFile('data.json',JSON.stringify(data));
           NODE
       - name: Publish enriched table
