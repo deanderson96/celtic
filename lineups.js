@@ -1,11 +1,28 @@
 (function(){
 'use strict';
 const API='https://www.thesportsdb.com/api/v1/json/123';
+const TEAM_ID='133647';
 const POLL_MS=5*60*1000;
 const WINDOW_MS=3*60*60*1000;
 let busy=false;
 let lastEventId='';
 let lastRenderedKey='';
+
+const style=document.createElement('style');
+style.textContent=`
+.preview-lineups{border-top:1px solid var(--line);background:rgba(0,0,0,.075)}
+.lineup-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.lineup-heading span,.lineup-team-heading span{display:block;color:var(--green-bright);font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.lineup-heading strong{display:block;margin-top:3px;font-size:14px}.lineup-heading small{color:var(--muted-2);font-size:9px;text-align:right}
+.lineup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}.lineup-team{padding:18px 20px}.lineup-team+ .lineup-team{border-left:1px solid var(--line)}
+.lineup-team-heading{display:flex;align-items:center;gap:10px;margin-bottom:12px}.lineup-team-heading img{width:34px;height:34px;object-fit:contain}.lineup-team-heading h4{margin:2px 0 0;font-size:13px}
+.lineup-team ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}.lineup-team li{min-width:0;display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;gap:7px;padding:6px 7px;border-radius:8px;background:rgba(255,255,255,.025)}
+.lineup-order{width:22px;height:22px;display:grid;place-items:center;border-radius:6px;background:#10241c;color:#8ce8b5;font-size:8px;font-weight:900}.lineup-team li strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}.lineup-team li small{display:block;margin-top:1px;color:var(--muted-2);font-size:8px}
+.lineup-source{padding:9px 20px;border-top:1px solid var(--line);color:var(--muted-2);font-size:8px;text-align:right}
+@media(max-width:680px){.lineup-heading{align-items:flex-start;flex-direction:column}.lineup-heading small{text-align:left}.lineup-grid{grid-template-columns:1fr}.lineup-team+ .lineup-team{border-left:0;border-top:1px solid var(--line)}.lineup-team ol{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.lineup-team ol{grid-template-columns:1fr}}
+`;
+document.head.appendChild(style);
 
 const esc=value=>String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
 const clean=value=>String(value??'').replace(/\s+/g,' ').trim();
