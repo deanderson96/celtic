@@ -1,8 +1,9 @@
 (function(){
 'use strict';
-const API='https://www.thesportsdb.com/api/v1/json/123';
+const TDB_API='https://www.thesportsdb.com/api/v1/json/123';
+const ESPN_ORIGINS=['https://site.api.espn.com','https://site.web.api.espn.com'];
 const CELTIC_ID='133647';
-const POLL_MS=2*60*1000;
+const POLL_MS=60*1000;
 const LIVE_STATUSES=new Set(['1H','HT','2H','ET','P','BT','SUSP','INT']);
 const STATUS_LABELS={
   '1H':'First half','HT':'Half-time','2H':'Second half','ET':'Extra time','P':'Penalty shootout',
@@ -11,10 +12,11 @@ const STATUS_LABELS={
 let busy=false;
 let currentId='';
 
-const esc=value=>String(value??'').replace(/[&<>'\"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[ch]));
+const esc=value=>String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+const clean=value=>String(value??'').replace(/\s+/g,' ').trim();
 const eventDate=e=>{if(!e?.dateEvent)return null;const d=new Date(`${e.dateEvent}T${String(e.strTime||'15:00:00').slice(0,8)}Z`);return Number.isNaN(d.valueOf())?null:d};
 const liveStatus=e=>String(e?.strStatus||'').toUpperCase();
-const isLive=e=>LIVE_STATUSES.has(liveStatus(e));
+const isTdbLive=e=>LIVE_STATUSES.has(liveStatus(e));
 
 const style=document.createElement('style');
 style.textContent=`
@@ -28,14 +30,24 @@ style.textContent=`
 `;
 document.head.appendChild(style);
 
-async function getJson(path){
+async function fetchJsonUrl(url){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),10000);
   try{
-    const response=await fetch(`${API}/${path}`,{cache:'no-store',signal:controller.signal});
+    const response=await fetch(url,{cache:'no-store',signal:controller.signal});
     if(!response.ok)throw new Error(`HTTP ${response.status}`);
     return response.json();
   }finally{clearTimeout(timer)}
+}
+
+async function tdbJson(path){return fetchJsonUrl(`${TDB_API}/${path}`)}
+
+async function espnJson(path){
+  let lastError=null;
+  for(const origin of ESPN_ORIGINS){
+    try{return await fetchJsonUrl(`${origin}${path}`)}catch(error){lastError=error}
+  }
+  throw lastError||new Error('ESPN feed unavailable');
 }
 
 async function staticData(){
@@ -54,15 +66,110 @@ function candidateEvents(data){
   }).sort((a,b)=>Math.abs((eventDate(a)?.valueOf()||0)-now)-Math.abs((eventDate(b)?.valueOf()||0)-now));
 }
 
-async function findLiveEvent(){
-  const data=await staticData();
-  for(const candidate of candidateEvents(data).slice(0,2)){
-    try{
-      const fresh=(await getJson(`lookupevent.php?id=${encodeURIComponent(candidate.idEvent)}`)).events?.[0];
-      if(fresh&&isLive(fresh))return fresh;
-    }catch(_){}
+function espnLeague(event){
+  const name=String(event?.strLeague||'').toLowerCase();
+  if(name.includes('champions league'))return 'uefa.champions';
+  if(name.includes('europa conference')||name.includes('conference league'))return 'uefa.europa.conf';
+  if(name.includes('europa league'))return 'uefa.europa';
+  if(name.includes('league cup'))return 'sco.cis';
+  if(name.includes('fa cup')||name.includes('scottish cup'))return 'sco.tennents';
+  return 'sco.1';
+}
+
+function dateKey(event){return String(event?.dateEvent||'').replaceAll('-','')}
+
+function espnCompetitors(event){return event?.competitions?.[0]?.competitors||[]}
+
+function espnTeamName(competitor){return competitor?.team?.displayName||competitor?.team?.shortDisplayName||competitor?.team?.name||''}
+
+function isCelticEspnEvent(event){return espnCompetitors(event).some(c=>/celtic/i.test(espnTeamName(c)))}
+
+function isEspnLive(event){
+  const type=event?.status?.type||{};
+  return type.state==='in'||type.completed===false&&Number(event?.status?.period||0)>0;
+}
+
+function normaliseEspnEvent(event,candidate,leagueName){
+  const competition=event.competitions?.[0]||{};
+  const competitors=competition.competitors||[];
+  const home=competitors.find(c=>c.homeAway==='home')||competitors[0]||{};
+  const away=competitors.find(c=>c.homeAway==='away')||competitors[1]||{};
+  const status=event.status||{};
+  const displayClock=clean(status.displayClock||status.type?.shortDetail||status.type?.detail||'Live');
+  return {
+    idEvent:String(event.id||candidate.idEvent||''),
+    espnId:String(event.id||''),
+    homeEspnId:String(home.id||home.team?.id||''),
+    awayEspnId:String(away.id||away.team?.id||''),
+    strHomeTeam:espnTeamName(home)||candidate.strHomeTeam,
+    strAwayTeam:espnTeamName(away)||candidate.strAwayTeam,
+    intHomeScore:home.score??candidate.intHomeScore??'–',
+    intAwayScore:away.score??candidate.intAwayScore??'–',
+    strHomeTeamBadge:home.team?.logo||candidate.strHomeTeamBadge||'',
+    strAwayTeamBadge:away.team?.logo||candidate.strAwayTeamBadge||'',
+    strLeague:leagueName||candidate.strLeague||'Competition',
+    strVenue:competition.venue?.fullName||candidate.strVenue||'Venue TBC',
+    strStatus:displayClock,
+    _statusLabel:displayClock,
+    _provider:'ESPN live feed'
+  };
+}
+
+async function findEspnLive(candidate){
+  const league=espnLeague(candidate);
+  const board=await espnJson(`/apis/site/v2/sports/soccer/${league}/scoreboard?dates=${dateKey(candidate)}&v=${Date.now()}`);
+  const event=(board.events||[]).find(item=>isCelticEspnEvent(item)&&isEspnLive(item));
+  if(!event)return null;
+  return normaliseEspnEvent(event,candidate,board.leagues?.[0]?.name||candidate.strLeague);
+}
+
+function statValue(stat){return stat?.displayValue??stat?.value??''}
+
+function normaliseEspnStats(summary,event){
+  const teams=summary?.boxscore?.teams||[];
+  if(teams.length<2)return [];
+  const home=teams.find(row=>String(row.team?.id||'')===event.homeEspnId)||teams.find(row=>/kilmarnock/i.test(row.team?.displayName||'')===/kilmarnock/i.test(event.strHomeTeam))||teams[0];
+  const away=teams.find(row=>String(row.team?.id||'')===event.awayEspnId)||teams.find(row=>row!==home)||teams[1];
+  const homeMap=new Map((home?.statistics||[]).map(stat=>[stat.name||stat.abbreviation||stat.displayName,stat]));
+  const awayMap=new Map((away?.statistics||[]).map(stat=>[stat.name||stat.abbreviation||stat.displayName,stat]));
+  const priority=['possessionPct','totalShots','shotsOnTarget','wonCorners','foulsCommitted','offsides','yellowCards','saves','totalPasses','passPct'];
+  const seen=new Set();
+  const keys=[];
+  for(const key of priority)if(homeMap.has(key)&&awayMap.has(key))keys.push(key);
+  for(const key of homeMap.keys())if(!keys.includes(key)&&awayMap.has(key))keys.push(key);
+  const rows=[];
+  for(const key of keys){
+    const h=homeMap.get(key),a=awayMap.get(key);
+    const hv=statValue(h),av=statValue(a);
+    if(hv===''&&av==='')continue;
+    const label=clean(h?.displayName||a?.displayName||h?.shortDisplayName||a?.shortDisplayName||key.replace(/([A-Z])/g,' $1'));
+    const id=label.toLowerCase();
+    if(seen.has(id))continue;
+    seen.add(id);
+    rows.push({strStat:label,intHome:hv,intAway:av});
+    if(rows.length>=10)break;
   }
-  return null;
+  return rows;
+}
+
+async function espnStats(event){
+  if(!event.espnId)return [];
+  try{
+    const league=espnLeague({strLeague:event.strLeague});
+    const summary=await espnJson(`/apis/site/v2/sports/soccer/${league}/summary?event=${encodeURIComponent(event.espnId)}&v=${Date.now()}`);
+    return normaliseEspnStats(summary,event);
+  }catch(_){return []}
+}
+
+async function findTdbLive(candidate){
+  try{
+    const fresh=(await tdbJson(`lookupevent.php?id=${encodeURIComponent(candidate.idEvent)}`)).events?.[0];
+    return fresh&&isTdbLive(fresh)?{...fresh,_provider:'TheSportsDB live feed'}:null;
+  }catch(_){return null}
+}
+
+async function tdbStats(id){
+  try{return (await tdbJson(`lookupeventstats.php?id=${encodeURIComponent(id)}`)).eventstats||[]}catch(_){return []}
 }
 
 function numeric(value){
@@ -77,10 +184,6 @@ function statRow(stat){
   const hp=total>0&&hv!=null?Math.max(0,Math.min(100,(hv/total)*100)):50;
   const ap=total>0&&av!=null?Math.max(0,Math.min(100,(av/total)*100)):50;
   return `<div class="live-stat"><span class="live-stat-value">${esc(home)}</span><div class="live-stat-main"><span>${esc(stat.strStat||'Match stat')}</span><div class="live-stat-track" aria-hidden="true"><i style="width:${hp}%"></i><i style="width:${ap}%"></i></div></div><span class="live-stat-value">${esc(away)}</span></div>`;
-}
-
-async function eventStats(id){
-  try{return (await getJson(`lookupeventstats.php?id=${encodeURIComponent(id)}`)).eventstats||[]}catch(_){return []}
 }
 
 function ensurePanel(){
@@ -102,7 +205,7 @@ function removePanel(){
   currentId='';
 }
 
-function statusText(event){return STATUS_LABELS[liveStatus(event)]||liveStatus(event)||'Live'}
+function statusText(event){return event._statusLabel||STATUS_LABELS[liveStatus(event)]||event.strStatus||'Live'}
 
 function render(event,stats){
   const panel=ensurePanel();
@@ -123,12 +226,12 @@ function render(event,stats){
           <div class="live-score"><strong>${esc(homeScore)}–${esc(awayScore)}</strong><span>${esc(statusText(event))}</span></div>
           <div class="live-team"><img src="${esc(event.strAwayTeamBadge||'')}" alt=""><strong>${esc(event.strAwayTeam||'Away')}</strong></div>
         </div>
-        <div class="live-meta">Automatically checked every 2 minutes · Last checked ${esc(checked)}</div>
+        <div class="live-meta">Automatically checked every minute · Last checked ${esc(checked)}</div>
       </div>
       <div class="live-stats">
         <div class="live-stats-head"><strong>Match statistics</strong><small>Availability depends on the live provider feed</small></div>
-        ${stats.length?`<div class="live-stat-list">${stats.map(statRow).join('')}</div>`:'<div class="live-no-stats">Live statistics have not been published for this match yet. The panel will update automatically when they become available.</div>'}
-        <div class="live-source">Source: TheSportsDB live event + event statistics API</div>
+        ${stats.length?`<div class="live-stat-list">${stats.map(statRow).join('')}</div>`:'<div class="live-no-stats">Live statistics have not been published by the available feeds yet. This panel checks again automatically every minute.</div>'}
+        <div class="live-source">Source: ${esc(event._provider||'Live football data feed')}</div>
       </div>
     </div>`;
   currentId=String(event.idEvent||'');
@@ -138,10 +241,17 @@ async function refresh(){
   if(busy||document.visibilityState==='hidden')return;
   busy=true;
   try{
-    const event=await findLiveEvent();
-    if(!event){removePanel();return}
-    const stats=await eventStats(event.idEvent);
-    render(event,stats);
+    const data=await staticData();
+    const candidates=candidateEvents(data).slice(0,2);
+    for(const candidate of candidates){
+      try{
+        const espn=await findEspnLive(candidate);
+        if(espn){render(espn,await espnStats(espn));return}
+      }catch(_){}
+      const tdb=await findTdbLive(candidate);
+      if(tdb){render(tdb,await tdbStats(tdb.idEvent));return}
+    }
+    removePanel();
   }catch(_){
     if(!currentId)removePanel();
   }finally{busy=false}
