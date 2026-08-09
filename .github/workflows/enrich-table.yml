@@ -56,13 +56,14 @@ jobs:
               const headerCells=table.find('thead tr').last().find('th,td');
               const headers=headerCells.map((__,cell)=>clean($(cell).text()).toLowerCase()).get();
               const findIndex=patterns=>headers.findIndex(label=>patterns.some(pattern=>pattern.test(label)));
+              const idxRank=findIndex([/^pos/,/^#$/]);
               const idxTeam=findIndex([/^team/,/^club/]);
               const idxPlayed=findIndex([/^pld/,/^played/,/^gp$/,/^p$/]);
               const idxWin=findIndex([/^w$/,/^won/,/^wins/]);
               const idxDraw=findIndex([/^d$/,/^draw/,/^ties/]);
               const idxLoss=findIndex([/^l$/,/^lost/,/^loss/]);
               const idxGd=findIndex([/^gd$/,/^goal difference/]);
-              const idxPts=findIndex([/^pts/,/^points$/,/^p$/]);
+              const idxPts=findIndex([/^pts/,/^points$/]);
               const idxForm=findIndex([/^form/]);
               if(idxPlayed<0||idxWin<0||idxDraw<0||idxLoss<0||idxPts<0)return;
               table.find('tbody tr').each((__,rowEl)=>{
@@ -70,17 +71,15 @@ jobs:
                 if(!cells.length)return;
                 const texts=cells.map((___,cell)=>clean($(cell).text())).get();
                 let team=idxTeam>=0?texts[idxTeam]:'';
-                if(!team){
-                  team=$(rowEl).find('a').map((___,a)=>clean($(a).text())).get().find(Boolean)||'';
-                }
-                if(!team){
-                  team=$(rowEl).find('img[alt]').map((___,img)=>clean($(img).attr('alt'))).get().find(Boolean)||'';
-                }
+                if(!team)team=$(rowEl).find('a').map((___,a)=>clean($(a).text())).get().find(Boolean)||'';
+                if(!team)team=$(rowEl).find('img[alt]').map((___,img)=>clean($(img).attr('alt'))).get().find(Boolean)||'';
                 if(!team)return;
                 const formSource=idxForm>=0?texts[idxForm]:texts[texts.length-1];
                 const form=(String(formSource||'').toUpperCase().match(/[WDL]/g)||[]).join('').slice(-5);
                 parsed.push({
                   name:team,strTeam:team,
+                  intRank:idxRank>=0?asString(integer(texts[idxRank])):'',
+                  intPosition:idxRank>=0?asString(integer(texts[idxRank])):'',
                   intPlayed:asString(integer(texts[idxPlayed])),
                   intWin:asString(integer(texts[idxWin])),
                   intDraw:asString(integer(texts[idxDraw])),
@@ -124,29 +123,37 @@ jobs:
             const key=normalise(row.name||row.strTeam);
             const bbc=bbcByName.get(key);
             const api=apiByName.get(key);
-            const played=integer(row.intPlayed),points=integer(row.intPoints);
-            const bbcMatches=bbc&&integer(bbc.intPlayed)===played&&integer(bbc.intPoints)===points;
-            if(bbcMatches)matchedBbc++;
-            const source=bbcMatches?bbc:api;
-            const opening=inferOpeningRecord(row);
-            const pick=(field)=>{
-              const value=source?.[field];
-              if(value!==undefined&&value!==null&&String(value)!=='')return asString(value);
+            if(bbc)matchedBbc++;
+            const opening=inferOpeningRecord(bbc||row);
+            const source=bbc||api||row;
+            const pick=(field,fallback='')=>{
+              const sourceValue=source?.[field];
+              if(sourceValue!==undefined&&sourceValue!==null&&String(sourceValue)!=='')return asString(sourceValue);
               const existing=row?.[field];
               if(existing!==undefined&&existing!==null&&String(existing)!=='')return asString(existing);
-              return opening?.[field]??'';
+              const openingValue=opening?.[field];
+              if(openingValue!==undefined&&openingValue!==null)return asString(openingValue);
+              return fallback;
             };
-            const form=bbcMatches&&bbc.strForm?bbc.strForm:(api?.strForm||row.strForm||opening?.strForm||'');
-            return {...row,intWin:pick('intWin'),intDraw:pick('intDraw'),intLoss:pick('intLoss'),strForm:String(form).toUpperCase().replace(/[^WDL]/g,'').slice(-5)};
+            return {
+              ...row,
+              intPlayed:pick('intPlayed','0'),
+              intWin:pick('intWin','0'),
+              intDraw:pick('intDraw','0'),
+              intLoss:pick('intLoss','0'),
+              intGoalDifference:pick('intGoalDifference','0'),
+              intPoints:pick('intPoints','0'),
+              strForm:String(source?.strForm||row.strForm||opening?.strForm||'').toUpperCase().replace(/[^WDL]/g,'').slice(-5)
+            };
           });
 
           const missing=enriched.filter(row=>[row.intWin,row.intDraw,row.intLoss].some(value=>value==='')).map(row=>row.name||row.strTeam);
           if(missing.length)throw new Error(`WDL still missing for: ${missing.join(', ')}`);
-          console.log(`BBC rows matched current official standings: ${matchedBbc}/${SPFL_CLUBS}`);
-          console.log('WDL coverage: 12/12 clubs');
+          console.log(`BBC rows matched by club name: ${matchedBbc}/${SPFL_CLUBS}`);
+          console.log(`WDL coverage: ${enriched.filter(row=>row.intWin!==''&&row.intDraw!==''&&row.intLoss!=='').length}/${SPFL_CLUBS} clubs`);
           console.log(`Form coverage: ${enriched.filter(row=>row.strForm).length}/${SPFL_CLUBS} clubs`);
           data.table=enriched;
-          data.coverage={...(data.coverage||{}),tableTeams:enriched.length,tableTarget:SPFL_CLUBS,wdlTeams:enriched.length,formTeams:enriched.filter(row=>row.strForm).length};
+          data.coverage={...(data.coverage||{}),tableTeams:enriched.length,tableTarget:SPFL_CLUBS,wdlTeams:enriched.filter(row=>row.intWin!==''&&row.intDraw!==''&&row.intLoss!=='').length,formTeams:enriched.filter(row=>row.strForm).length};
           await fs.writeFile('data.json',JSON.stringify(data));
           NODE
       - name: Publish enriched table
