@@ -1,6 +1,9 @@
 (function(){
 'use strict';
 
+// Update this timestamp whenever a credible transfer change is committed to the table.
+const tableLastUpdated='9 Aug 2026, 09:22';
+
 const speculation=[
   {
     category:'Potential departure',
@@ -87,7 +90,7 @@ const speculation=[
 const esc=value=>String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
 
 function tableHtml(){
-  return `<div class="data-table-wrap"><table class="data-table transfer-table"><thead><tr><th>Category</th><th>Player</th><th>Previous status</th><th>Latest credible update</th><th>Confidence</th><th>Source</th></tr></thead><tbody>${speculation.map(item=>`<tr><td><span class="status-chip upcoming">${esc(item.category)}</span></td><td><strong>${esc(item.player)}</strong></td><td>${esc(item.previousStatus)}</td><td>${esc(item.latestUpdate)}</td><td><strong>${esc(item.confidence)}</strong></td><td><a href="${esc(item.url)}" target="_blank" rel="noreferrer">${esc(item.source)}<br><small>${esc(item.updated)}</small> ↗</a></td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="transfer-updated" style="display:flex;align-items:center;justify-content:flex-end;gap:.4rem;margin:0 0 .65rem;font-size:.78rem;opacity:.62"><span aria-hidden="true" style="width:.42rem;height:.42rem;border-radius:50%;background:currentColor;display:inline-block"></span><span>Last updated ${esc(tableLastUpdated)}</span></div><div class="data-table-wrap"><table class="data-table transfer-table"><thead><tr><th>Category</th><th>Player</th><th>Previous status</th><th>Latest credible update</th><th>Confidence</th><th>Source</th></tr></thead><tbody>${speculation.map(item=>`<tr><td><span class="status-chip upcoming">${esc(item.category)}</span></td><td><strong>${esc(item.player)}</strong></td><td>${esc(item.previousStatus)}</td><td>${esc(item.latestUpdate)}</td><td><strong>${esc(item.confidence)}</strong></td><td><a href="${esc(item.url)}" target="_blank" rel="noreferrer">${esc(item.source)}<br><small>${esc(item.updated)}</small> ↗</a></td></tr>`).join('')}</tbody></table></div>`;
 }
 
 function render(){
