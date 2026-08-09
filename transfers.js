@@ -15,19 +15,19 @@ const speculation=[
   {
     category:'Potential departure',
     player:'Alistair Johnston',
-    previousStatus:'Everton were interested, but no formal bid had been reported and the move remained uncertain.',
-    latestUpdate:'Johnston has reportedly told Celtic he wants to pursue a Premier League move. Everton remain the leading suitor, while Celtic are reluctant to sell before the Champions League play-off and are reported to value him at around £15m–£20m.',
-    confidence:'Medium',
-    updated:'6 Aug 2026',
+    previousStatus:'Everton’s interest had appeared to cool after no fee was agreed with Celtic.',
+    latestUpdate:'Everton’s pursuit has revived materially. Johnston is reported as David Moyes’ priority right-back target, an Everton scout watched him against Dundee, and Martin O’Neill said Moyes has indicated an offer is planned. No formal bid has yet been reported.',
+    confidence:'Medium–High',
+    updated:'8 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16649036/alistair-johnston-wants-celtic-exit-premier-league/'
+    url:'https://www.thescottishsun.co.uk/sport/16658638/andy-burnham-begs-everton-sign-alistair-johnston/'
   },
   {
     category:'Incoming target',
     player:'Haissem Hassan',
-    previousStatus:'Reports had indicated Hassan agreed personal terms with Marseille, making Celtic outsiders.',
-    latestUpdate:'Celtic are now reported to be very close to a deal with Real Oviedo, with Hassan preferring the Celtic move and negotiations advanced around a package worth roughly £9m–£9.5m. The transfer is not yet official.',
-    confidence:'Medium–High',
+    previousStatus:'Celtic had moved into pole position and were reported to be very close to an agreement with Real Oviedo.',
+    latestUpdate:'Celtic are reported to be finalising a deal worth roughly £9m–£9.5m for Hassan, with the transfer described as being in its closing stages. It remains unofficial until the clubs announce completion.',
+    confidence:'High',
     updated:'7 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16650981/celtic-close-signing-winger-blockbuster-transfer/'
@@ -71,6 +71,16 @@ const speculation=[
     updated:'5 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16645908/celtic-rebuff-star-approach-premiership-rivals/'
+  },
+  {
+    category:'Incoming target',
+    player:'Greg Taylor',
+    previousStatus:'No Celtic return was being actively tracked; Celtic had been exploring other left-back options.',
+    latestUpdate:'Celtic are reportedly considering bringing Taylor back from PAOK after missing out on Marcelo Saracchi. Taylor is said to be open to returning, although Celtic have not made a formal approach and Burnley and Málaga are also interested.',
+    confidence:'Medium–High',
+    updated:'8 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16658651/greg-taylor-celtic-return-stunning-transfer-swoop/'
   }
 ];
 
