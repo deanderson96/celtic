@@ -2,7 +2,7 @@
 'use strict';
 
 // Update this timestamp whenever a credible transfer change is committed to the table.
-const tableLastUpdated='9 Aug 2026, 09:22';
+const tableLastUpdated='10 Aug 2026, 09:02';
 
 const speculation=[
   {
@@ -48,12 +48,12 @@ const speculation=[
   {
     category:'Incoming target',
     player:'Gvidas Gineitis',
-    previousStatus:'Reported as a possible midfield replacement if Engels leaves.',
-    latestUpdate:'The player’s agent confirmed Celtic have made contact, while clarifying that no formal offer has been submitted.',
-    confidence:'High',
-    updated:'3 Aug 2026',
+    previousStatus:'The player’s agent had confirmed Celtic contact, with no formal offer submitted.',
+    latestUpdate:'Celtic remain interested, but Red Bull Salzburg have now joined the pursuit and view Gineitis as a midfield option. The added competition modestly reduces Celtic’s likelihood of completing a deal, and no formal Celtic bid has been reported.',
+    confidence:'Medium–High',
+    updated:'10 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16638341/celtic-target-agent-ready-cooperate-transfer-update/'
+    url:'https://www.thescottishsun.co.uk/sport/16665279/celtic-transfer-target-wanted-danny-rohl-rangers-salzburg/'
   },
   {
     category:'Incoming target',
@@ -84,6 +84,16 @@ const speculation=[
     updated:'8 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16658651/greg-taylor-celtic-return-stunning-transfer-swoop/'
+  },
+  {
+    category:'Incoming target',
+    player:'Nick Pope',
+    previousStatus:'No Celtic move for Pope was being actively tracked.',
+    latestUpdate:'Celtic are reportedly monitoring Pope’s situation at Newcastle after he fell down the goalkeeping pecking order. No Celtic bid or formal approach has been reported, so this remains an emerging target rather than an advanced deal.',
+    confidence:'Medium',
+    updated:'9 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16664731/pope-celtic-goalkeeper-newcastle-sinisalo-doohan/'
   }
 ];
 
