@@ -2,7 +2,7 @@
 'use strict';
 
 // Update this timestamp whenever a credible transfer change is committed to the table.
-const tableLastUpdated='10 Aug 2026, 09:02';
+const tableLastUpdated='11 Aug 2026, 08:17';
 
 const speculation=[
   {
@@ -28,10 +28,10 @@ const speculation=[
   {
     category:'Incoming target',
     player:'Haissem Hassan',
-    previousStatus:'Celtic had moved into pole position and were reported to be very close to an agreement with Real Oviedo.',
-    latestUpdate:'Celtic are reported to be finalising a deal worth roughly £9m–£9.5m for Hassan, with the transfer described as being in its closing stages. It remains unofficial until the clubs announce completion.',
+    previousStatus:'Celtic were reported to be finalising a roughly £9m–£9.5m deal, with Hassan expected in Glasgow for a medical.',
+    latestUpdate:'Celtic have now reportedly agreed the deal with Real Oviedo, with the package reported as £6m upfront plus £3m in add-ons. This moves the transfer to an agreed club-to-club deal, although it still awaits official Celtic confirmation.',
     confidence:'High',
-    updated:'7 Aug 2026',
+    updated:'11 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16650981/celtic-close-signing-winger-blockbuster-transfer/'
   },
