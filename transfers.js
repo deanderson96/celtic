@@ -2,74 +2,54 @@
 'use strict';
 
 // Update this timestamp whenever a credible transfer change is committed to the table.
-const tableLastUpdated='11 Aug 2026, 08:17';
+const tableLastUpdated='13 Aug 2026, 18:06';
 
 const speculation=[
   {
     category:'Potential departure',
     player:'Arne Engels',
-    previousStatus:'West Ham had submitted an improved second bid after agreeing personal terms with the player.',
-    latestUpdate:'West Ham are preparing a third bid reported at about £25m. Celtic have not accepted an offer and want Engels available for the Champions League play-off.',
+    previousStatus:'West Ham had continued to push after Celtic rejected earlier approaches.',
+    latestUpdate:'West Ham are reported to be preparing an improved package worth £25m guaranteed plus promotion-related bonuses. Celtic have not accepted an offer, but the financial escalation materially increases the likelihood of a departure.',
     confidence:'High',
-    updated:'5 Aug 2026',
+    updated:'12 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16644244/celtic-west-ham-arne-engels-bid-transfer-latest/'
+    url:'https://www.thescottishsun.co.uk/sport/16675728/huge-arne-engels-development-west-ham-celtic-transfer-news/'
   },
   {
     category:'Potential departure',
     player:'Alistair Johnston',
-    previousStatus:'Everton’s interest had appeared to cool after no fee was agreed with Celtic.',
-    latestUpdate:'Everton’s pursuit has revived materially. Johnston is reported as David Moyes’ priority right-back target, an Everton scout watched him against Dundee, and Martin O’Neill said Moyes has indicated an offer is planned. No formal bid has yet been reported.',
+    previousStatus:'Everton’s pursuit had revived, with Johnston viewed as a priority right-back target.',
+    latestUpdate:'Johnston has suffered a fresh injury that is expected to keep him out of Celtic’s Champions League play-off and could complicate or delay Everton’s pursuit. No transfer agreement has been reported.',
     confidence:'Medium–High',
-    updated:'8 Aug 2026',
+    updated:'13 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16658638/andy-burnham-begs-everton-sign-alistair-johnston/'
-  },
-  {
-    category:'Incoming target',
-    player:'Haissem Hassan',
-    previousStatus:'Celtic were reported to be finalising a roughly £9m–£9.5m deal, with Hassan expected in Glasgow for a medical.',
-    latestUpdate:'Celtic have now reportedly agreed the deal with Real Oviedo, with the package reported as £6m upfront plus £3m in add-ons. This moves the transfer to an agreed club-to-club deal, although it still awaits official Celtic confirmation.',
-    confidence:'High',
-    updated:'11 Aug 2026',
-    source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16650981/celtic-close-signing-winger-blockbuster-transfer/'
-  },
-  {
-    category:'Incoming target',
-    player:'Mika Baur',
-    previousStatus:'Personal terms were reported agreed, with Celtic negotiating with Paderborn.',
-    latestUpdate:'Paderborn have rejected Celtic’s offers and publicly indicated they expect Baur to stay. The pursuit remains possible but has lost momentum.',
-    confidence:'High',
-    updated:'2 Aug 2026',
-    source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16633569/mika-baur-celtic-transfer-paderborn-boss-cold-water/'
+    url:'https://www.thescottishsun.co.uk/sport/16679009/celtic-alistair-johnston-injury-everton/'
   },
   {
     category:'Incoming target',
     player:'Gvidas Gineitis',
     previousStatus:'The player’s agent had confirmed Celtic contact, with no formal offer submitted.',
-    latestUpdate:'Celtic remain interested, but Red Bull Salzburg have now joined the pursuit and view Gineitis as a midfield option. The added competition modestly reduces Celtic’s likelihood of completing a deal, and no formal Celtic bid has been reported.',
+    latestUpdate:'Celtic remain interested, but Red Bull Salzburg have joined the pursuit. Gineitis is still viewed as a possible midfield option if further departures occur, and no formal Celtic bid has been reported.',
     confidence:'Medium–High',
-    updated:'10 Aug 2026',
+    updated:'13 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16665279/celtic-transfer-target-wanted-danny-rohl-rangers-salzburg/'
+    url:'https://www.thescottishsun.co.uk/sport/16681019/celtic-transfer-special-mika-baur-arne-engels-replacement/'
   },
   {
     category:'Incoming target',
     player:'Farès Ghedjemis',
-    previousStatus:'Celtic had an opening bid rejected by Frosinone but remained actively interested.',
-    latestUpdate:'Celtic now appear to be prioritising Haissem Hassan for the right-wing role, with Hassan viewed as the more attainable deal. Ghedjemis remains on the wider target list, but the likelihood of Celtic pushing this deal immediately has decreased.',
-    confidence:'Medium–High',
-    updated:'7 Aug 2026',
+    previousStatus:'Celtic had an opening bid rejected by Frosinone but remained interested.',
+    latestUpdate:'Ghedjemis remains on the wider target list, but Celtic’s completed signing of Haissem Hassan reduces the immediate need to accelerate another right-wing deal.',
+    confidence:'Medium',
+    updated:'13 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16651499/celtic-transfer-special-kuhn-replacement-alistair-johnston-hassan/'
   },
   {
     category:'Potential departure',
     player:'Dane Murray',
-    previousStatus:'No active departure was being tracked.',
-    latestUpdate:'Celtic have reportedly rejected Dundee’s request to take Murray on loan, materially reducing the likelihood of a short-term exit and indicating they currently intend to retain him.',
+    previousStatus:'Dundee had explored taking Murray on loan.',
+    latestUpdate:'Celtic rejected Dundee’s loan approach, materially reducing the likelihood of a short-term exit and indicating they currently intend to retain him.',
     confidence:'Medium–High',
     updated:'5 Aug 2026',
     source:'Scottish Sun',
@@ -78,8 +58,8 @@ const speculation=[
   {
     category:'Incoming target',
     player:'Greg Taylor',
-    previousStatus:'No Celtic return was being actively tracked; Celtic had been exploring other left-back options.',
-    latestUpdate:'Celtic are reportedly considering bringing Taylor back from PAOK after missing out on Marcelo Saracchi. Taylor is said to be open to returning, although Celtic have not made a formal approach and Burnley and Málaga are also interested.',
+    previousStatus:'No Celtic return was being actively tracked.',
+    latestUpdate:'Celtic are reportedly considering bringing Taylor back from PAOK. Taylor is said to be open to returning, although no formal Celtic approach has been reported and other clubs are interested.',
     confidence:'Medium–High',
     updated:'8 Aug 2026',
     source:'Scottish Sun',
@@ -88,12 +68,42 @@ const speculation=[
   {
     category:'Incoming target',
     player:'Nick Pope',
-    previousStatus:'No Celtic move for Pope was being actively tracked.',
-    latestUpdate:'Celtic are reportedly monitoring Pope’s situation at Newcastle after he fell down the goalkeeping pecking order. No Celtic bid or formal approach has been reported, so this remains an emerging target rather than an advanced deal.',
-    confidence:'Medium',
-    updated:'9 Aug 2026',
+    previousStatus:'Celtic had been linked with Pope after his Newcastle future became uncertain.',
+    latestUpdate:'The Celtic link has been directly played down. Reporting says Celtic have made no contact over Pope and are looking for a backup goalkeeper rather than a player of his profile and cost, making a move materially less likely.',
+    confidence:'Medium–High',
+    updated:'11 Aug 2026',
+    source:'Football Insider / Shields Gazette',
+    url:'https://cominghomenewcastle.sbnation.com/newcastle-united-transfer-news-rumors/23870/celtic-not-interested-in-newcastles-veteran-in-late-transfer-twist-report'
+  },
+  {
+    category:'Incoming target',
+    player:'Landon Emenalo',
+    previousStatus:'No Celtic move was being tracked.',
+    latestUpdate:'Celtic are targeting the Chelsea left-back for a loan move. Emenalo has toured Lennoxtown and is being considered as cover for Kieran Tierney.',
+    confidence:'High',
+    updated:'13 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16664731/pope-celtic-goalkeeper-newcastle-sinisalo-doohan/'
+    url:'https://www.thescottishsun.co.uk/sport/16678559/celtic-loan-swoop-chelsea-lennoxtown-tour-emenalo/'
+  },
+  {
+    category:'Potential departure',
+    player:'Reo Hatate',
+    previousStatus:'Hatate had previously indicated a desire to leave Celtic this summer.',
+    latestUpdate:'Fresh reporting says Mika Baur’s arrival is expected to clear the way for Hatate’s departure. No destination or agreed transfer has yet been reported.',
+    confidence:'Medium–High',
+    updated:'13 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16681019/celtic-transfer-special-mika-baur-arne-engels-replacement/'
+  },
+  {
+    category:'Incoming target',
+    player:'Ermin Mahmić',
+    previousStatus:'No Celtic move was being tracked.',
+    latestUpdate:'Celtic are actively tracking the Slovan Liberec forward and have enquired about wage expectations and the club’s asking price. Several European clubs are also interested, so this remains an emerging rather than advanced deal.',
+    confidence:'Medium–High',
+    updated:'13 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16681447/celtic-world-cup-wonderkid-askou-rohl-transfer-bosnia/'
   }
 ];
 
