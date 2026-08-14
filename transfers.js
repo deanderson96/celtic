@@ -2,7 +2,7 @@
 'use strict';
 
 // Update this timestamp whenever a credible transfer change is committed to the table.
-const tableLastUpdated='14 Aug 2026, 07:56';
+const tableLastUpdated='14 Aug 2026, 12:57';
 
 const speculation=[
   {
@@ -104,6 +104,16 @@ const speculation=[
     updated:'13 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16681447/celtic-world-cup-wonderkid-askou-rohl-transfer-bosnia/'
+  },
+  {
+    category:'Incoming target',
+    player:'Leo Cavallius',
+    previousStatus:'No Celtic move for Cavallius was being tracked.',
+    latestUpdate:'Celtic are reportedly considering a move for the IF Brommapojkarna goalkeeper as they seek competition for Viljami Sinisalo. Parma are also interested, and reports indicate a strong offer would be required because Cavallius is under contract through 2028. No formal Celtic bid has yet been reported.',
+    confidence:'Medium–High',
+    updated:'14 Aug 2026',
+    source:'Scottish Sun / Expressen',
+    url:'https://www.thescottishsun.co.uk/sport/16684739/celtic-battle-serie-a-swedish-goalkeeper-cavallius/'
   }
 ];
 
