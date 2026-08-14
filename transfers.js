@@ -2,18 +2,18 @@
 'use strict';
 
 // Update this timestamp whenever a credible transfer change is committed to the table.
-const tableLastUpdated='13 Aug 2026, 18:06';
+const tableLastUpdated='14 Aug 2026, 07:56';
 
 const speculation=[
   {
     category:'Potential departure',
     player:'Arne Engels',
-    previousStatus:'West Ham had continued to push after Celtic rejected earlier approaches.',
-    latestUpdate:'West Ham are reported to be preparing an improved package worth £25m guaranteed plus promotion-related bonuses. Celtic have not accepted an offer, but the financial escalation materially increases the likelihood of a departure.',
+    previousStatus:'West Ham were preparing an improved package after Celtic rejected earlier approaches.',
+    latestUpdate:'Celtic are now reported to have agreed a £22m fee with West Ham for Engels. Personal terms are not expected to be a problem, moving the transfer from active bidding to a reported club-to-club agreement, although the departure has not yet been officially announced.',
     confidence:'High',
-    updated:'12 Aug 2026',
+    updated:'14 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16675728/huge-arne-engels-development-west-ham-celtic-transfer-news/'
+    url:'https://www.thescottishsun.co.uk/sport/16683360/celtic-agree-fee-west-ham-arne-engels/'
   },
   {
     category:'Potential departure',
