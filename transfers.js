@@ -2,38 +2,98 @@
 'use strict';
 
 // Update this timestamp whenever a credible transfer change is committed to the table.
-const tableLastUpdated='14 Aug 2026, 12:57';
+const tableLastUpdated='16 Aug 2026, 03:56';
 
 const speculation=[
   {
     category:'Potential departure',
-    player:'Arne Engels',
-    previousStatus:'West Ham were preparing an improved package after Celtic rejected earlier approaches.',
-    latestUpdate:'Celtic are now reported to have agreed a £22m fee with West Ham for Engels. Personal terms are not expected to be a problem, moving the transfer from active bidding to a reported club-to-club agreement, although the departure has not yet been officially announced.',
-    confidence:'High',
-    updated:'14 Aug 2026',
-    source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16683360/celtic-agree-fee-west-ham-arne-engels/'
-  },
-  {
-    category:'Potential departure',
     player:'Alistair Johnston',
     previousStatus:'Everton’s pursuit had revived, with Johnston viewed as a priority right-back target.',
-    latestUpdate:'Johnston has suffered a fresh injury that is expected to keep him out of Celtic’s Champions League play-off and could complicate or delay Everton’s pursuit. No transfer agreement has been reported.',
-    confidence:'Medium–High',
-    updated:'13 Aug 2026',
+    latestUpdate:'Martin O’Neill says Johnston will remain sidelined beyond the transfer deadline. That materially reduces the likelihood of an Everton move this window.',
+    confidence:'High',
+    updated:'14 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16679009/celtic-alistair-johnston-injury-everton/'
   },
   {
     category:'Incoming target',
+    player:'Niko Sigur',
+    previousStatus:'Celtic were expected to reopen negotiations with Hajduk Split and Sigur had emerged as a prime option to replace Arne Engels.',
+    latestUpdate:'Fresh reporting says Sigur wants to join Celtic. His willingness to make the move strengthens Celtic’s position as talks with Hajduk Split are expected to progress.',
+    confidence:'High',
+    updated:'16 Aug 2026',
+    source:'Daily Record',
+    url:'https://www.dailyrecord.co.uk/sport/football/football-transfer-news/'
+  },
+  {
+    category:'Incoming target',
     player:'Gvidas Gineitis',
-    previousStatus:'The player’s agent had confirmed Celtic contact, with no formal offer submitted.',
-    latestUpdate:'Celtic remain interested, but Red Bull Salzburg have joined the pursuit. Gineitis is still viewed as a possible midfield option if further departures occur, and no formal Celtic bid has been reported.',
+    previousStatus:'Celtic remained interested, with Red Bull Salzburg also pursuing the Torino midfielder.',
+    latestUpdate:'Gineitis has been identified as one of Celtic’s prime midfield options following Arne Engels’ departure. No completed agreement has been reported.',
+    confidence:'High',
+    updated:'14 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16681019/celtic-transfer-special-mika-baur-arne-engels-replacement/'
+  },
+  {
+    category:'Incoming target',
+    player:'Balázs Tóth',
+    previousStatus:'Celtic were exploring a move after the Blackburn goalkeeper rejected a new contract.',
+    latestUpdate:'Blackburn manager Tony Mowbray has confirmed the club is prepared to sell Tóth. Blackburn are reported to value him at about £3.5m, increasing the likelihood of a deal if Celtic meet the price.',
+    confidence:'High',
+    updated:'15 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16688740/mowbray-celtic-keeper-target-blackburn-cash-in/'
+  },
+  {
+    category:'Incoming target',
+    player:'Landon Emenalo',
+    previousStatus:'Celtic were targeting the Chelsea left-back for a loan after he toured Lennoxtown.',
+    latestUpdate:'Martin O’Neill has publicly confirmed Celtic’s interest and said he would like Emenalo in the squad. No loan agreement has yet been announced.',
+    confidence:'Very high',
+    updated:'14 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16678559/celtic-loan-swoop-chelsea-lennoxtown-tour-emenalo/'
+  },
+  {
+    category:'Potential departure',
+    player:'Reo Hatate',
+    previousStatus:'Baur’s arrival was expected to facilitate a Hatate departure, but no destination had emerged.',
+    latestUpdate:'Panathinaikos have emerged as a concrete suitor and are reportedly prepared to offer Hatate a substantial wage increase. Celtic are expected to demand a seven-figure fee; no agreement has been reported.',
+    confidence:'Medium–High',
+    updated:'15 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16690351/celtic-star-transfer-target-panathinaikos-offer-bumper-wage-rise/'
+  },
+  {
+    category:'Potential departure',
+    player:'Michel-Ange Balikwisha',
+    previousStatus:'No active departure was being tracked.',
+    latestUpdate:'Balikwisha is reportedly set to leave Celtic after one season, with Monza, Basel and Elversberg scouting him. No destination or completed agreement has been announced.',
+    confidence:'Medium–High',
+    updated:'14 Aug 2026',
+    source:'Scottish Sun',
+    url:'https://www.thescottishsun.co.uk/sport/16687469/celtic-flop-leaves-one-year-three-clubs-chase/'
+  },
+  {
+    category:'Incoming target',
+    player:'Leo Cavallius',
+    previousStatus:'Celtic were considering the Brommapojkarna goalkeeper as competition for Viljami Sinisalo.',
+    latestUpdate:'Celtic are reported to be preparing a bid for Cavallius, with Parma also interested. No completed agreement has been reported.',
+    confidence:'Medium–High',
+    updated:'14 Aug 2026',
+    source:'Scottish Sun / Expressen',
+    url:'https://www.thescottishsun.co.uk/sport/16684739/celtic-battle-serie-a-swedish-goalkeeper-cavallius/'
+  },
+  {
+    category:'Incoming target',
+    player:'Ermin Mahmić',
+    previousStatus:'No Celtic move was being tracked.',
+    latestUpdate:'Celtic are actively tracking the Slovan Liberec forward and have enquired about wage expectations and the club’s asking price. Several European clubs are also interested.',
     confidence:'Medium–High',
     updated:'13 Aug 2026',
     source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16681019/celtic-transfer-special-mika-baur-arne-engels-replacement/'
+    url:'https://www.thescottishsun.co.uk/sport/16681447/celtic-world-cup-wonderkid-askou-rohl-transfer-bosnia/'
   },
   {
     category:'Incoming target',
@@ -64,60 +124,10 @@ const speculation=[
     updated:'8 Aug 2026',
     source:'Scottish Sun',
     url:'https://www.thescottishsun.co.uk/sport/16658651/greg-taylor-celtic-return-stunning-transfer-swoop/'
-  },
-  {
-    category:'Incoming target',
-    player:'Nick Pope',
-    previousStatus:'Celtic had been linked with Pope after his Newcastle future became uncertain.',
-    latestUpdate:'The Celtic link has been directly played down. Reporting says Celtic have made no contact over Pope and are looking for a backup goalkeeper rather than a player of his profile and cost, making a move materially less likely.',
-    confidence:'Medium–High',
-    updated:'11 Aug 2026',
-    source:'Football Insider / Shields Gazette',
-    url:'https://cominghomenewcastle.sbnation.com/newcastle-united-transfer-news-rumors/23870/celtic-not-interested-in-newcastles-veteran-in-late-transfer-twist-report'
-  },
-  {
-    category:'Incoming target',
-    player:'Landon Emenalo',
-    previousStatus:'No Celtic move was being tracked.',
-    latestUpdate:'Celtic are targeting the Chelsea left-back for a loan move. Emenalo has toured Lennoxtown and is being considered as cover for Kieran Tierney.',
-    confidence:'High',
-    updated:'13 Aug 2026',
-    source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16678559/celtic-loan-swoop-chelsea-lennoxtown-tour-emenalo/'
-  },
-  {
-    category:'Potential departure',
-    player:'Reo Hatate',
-    previousStatus:'Hatate had previously indicated a desire to leave Celtic this summer.',
-    latestUpdate:'Fresh reporting says Mika Baur’s arrival is expected to clear the way for Hatate’s departure. No destination or agreed transfer has yet been reported.',
-    confidence:'Medium–High',
-    updated:'13 Aug 2026',
-    source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16681019/celtic-transfer-special-mika-baur-arne-engels-replacement/'
-  },
-  {
-    category:'Incoming target',
-    player:'Ermin Mahmić',
-    previousStatus:'No Celtic move was being tracked.',
-    latestUpdate:'Celtic are actively tracking the Slovan Liberec forward and have enquired about wage expectations and the club’s asking price. Several European clubs are also interested, so this remains an emerging rather than advanced deal.',
-    confidence:'Medium–High',
-    updated:'13 Aug 2026',
-    source:'Scottish Sun',
-    url:'https://www.thescottishsun.co.uk/sport/16681447/celtic-world-cup-wonderkid-askou-rohl-transfer-bosnia/'
-  },
-  {
-    category:'Incoming target',
-    player:'Leo Cavallius',
-    previousStatus:'No Celtic move for Cavallius was being tracked.',
-    latestUpdate:'Celtic are reportedly considering a move for the IF Brommapojkarna goalkeeper as they seek competition for Viljami Sinisalo. Parma are also interested, and reports indicate a strong offer would be required because Cavallius is under contract through 2028. No formal Celtic bid has yet been reported.',
-    confidence:'Medium–High',
-    updated:'14 Aug 2026',
-    source:'Scottish Sun / Expressen',
-    url:'https://www.thescottishsun.co.uk/sport/16684739/celtic-battle-serie-a-swedish-goalkeeper-cavallius/'
   }
 ];
 
-const esc=value=>String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+const esc=value=>String(value??'').replace(/[&<>'\"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[ch]));
 
 function tableHtml(){
   return `<div class="transfer-updated" style="display:flex;align-items:center;justify-content:flex-end;gap:.4rem;margin:0 0 .65rem;font-size:.78rem;opacity:.62"><span aria-hidden="true" style="width:.42rem;height:.42rem;border-radius:50%;background:currentColor;display:inline-block"></span><span>Last updated ${esc(tableLastUpdated)}</span></div><div class="data-table-wrap"><table class="data-table transfer-table"><thead><tr><th>Category</th><th>Player</th><th>Previous status</th><th>Latest credible update</th><th>Confidence</th><th>Source</th></tr></thead><tbody>${speculation.map(item=>`<tr><td><span class="status-chip upcoming">${esc(item.category)}</span></td><td><strong>${esc(item.player)}</strong></td><td>${esc(item.previousStatus)}</td><td>${esc(item.latestUpdate)}</td><td><strong>${esc(item.confidence)}</strong></td><td><a href="${esc(item.url)}" target="_blank" rel="noreferrer">${esc(item.source)}<br><small>${esc(item.updated)}</small> ↗</a></td></tr>`).join('')}</tbody></table></div>`;
