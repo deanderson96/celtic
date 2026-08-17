@@ -2,112 +2,52 @@
 'use strict';
 
 // Update this timestamp whenever a credible transfer change is committed to the table.
-const tableLastUpdated='16 Aug 2026, 12:01';
+const tableLastUpdated='17 Aug 2026, 17:49';
 
 const speculation=[
   {
-    category:'Potential departure',
-    player:'Alistair Johnston',
-    previousStatus:'Everton’s pursuit had revived, with Johnston viewed as a priority right-back target.',
-    latestUpdate:'Martin O’Neill says Johnston will remain sidelined beyond the transfer deadline. That materially reduces the likelihood of an Everton move this window.',
-    confidence:'High', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16679009/celtic-alistair-johnston-injury-everton/'
+    category:'Potential departure', player:'Alistair Johnston', previousStatus:'Everton’s pursuit had revived, with Johnston viewed as a priority right-back target.', latestUpdate:'Martin O’Neill says Johnston will remain sidelined beyond the transfer deadline. That materially reduces the likelihood of an Everton move this window.', confidence:'High', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16679009/celtic-alistair-johnston-injury-everton/'
   },
   {
-    category:'Incoming target', player:'Niko Sigur',
-    previousStatus:'Celtic were expected to reopen negotiations with Hajduk Split and Sigur had emerged as a prime option to replace Arne Engels.',
-    latestUpdate:'Fresh reporting says Sigur wants to join Celtic. His willingness to make the move strengthens Celtic’s position as talks with Hajduk Split are expected to progress.',
-    confidence:'High', updated:'16 Aug 2026', source:'Daily Record', url:'https://www.dailyrecord.co.uk/sport/football/football-transfer-news/'
+    category:'Incoming target', player:'Niko Sigur', previousStatus:'Celtic were expected to reopen negotiations with Hajduk Split and Sigur had emerged as a prime option to replace Arne Engels.', latestUpdate:'Fresh reporting says Sigur wants to join Celtic. His willingness to make the move strengthens Celtic’s position as talks with Hajduk Split are expected to progress.', confidence:'High', updated:'16 Aug 2026', source:'Daily Record', url:'https://www.dailyrecord.co.uk/sport/football/football-transfer-news/'
   },
   {
-    category:'Incoming target', player:'Gvidas Gineitis',
-    previousStatus:'Celtic remained interested, with Red Bull Salzburg also pursuing the Torino midfielder.',
-    latestUpdate:'Gineitis has been identified as one of Celtic’s prime midfield options following Arne Engels’ departure. No completed agreement has been reported.',
-    confidence:'High', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16681019/celtic-transfer-special-mika-baur-arne-engels-replacement/'
+    category:'Incoming target', player:'Gvidas Gineitis', previousStatus:'Celtic remained interested, with Red Bull Salzburg also pursuing the Torino midfielder.', latestUpdate:'Gineitis has been identified as one of Celtic’s prime midfield options following Arne Engels’ departure. No completed agreement has been reported.', confidence:'High', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16681019/celtic-transfer-special-mika-baur-arne-engels-replacement/'
   },
   {
-    category:'Incoming target', player:'Balázs Tóth',
-    previousStatus:'Celtic were exploring a move after the Blackburn goalkeeper rejected a new contract.',
-    latestUpdate:'Blackburn manager Tony Mowbray has confirmed the club is prepared to sell Tóth. Blackburn are reported to value him at about £3.5m, increasing the likelihood of a deal if Celtic meet the price.',
-    confidence:'High', updated:'15 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16688740/mowbray-celtic-keeper-target-blackburn-cash-in/'
+    category:'Incoming target', player:'Balázs Tóth', previousStatus:'Celtic were exploring a move after the Blackburn goalkeeper rejected a new contract.', latestUpdate:'Blackburn manager Tony Mowbray has confirmed the club is prepared to sell Tóth. Blackburn are reported to value him at about £3.5m, increasing the likelihood of a deal if Celtic meet the price.', confidence:'High', updated:'15 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16688740/mowbray-celtic-keeper-target-blackburn-cash-in/'
   },
   {
-    category:'Incoming target', player:'Landon Emenalo',
-    previousStatus:'Celtic were targeting the Chelsea left-back for a loan after he toured Lennoxtown.',
-    latestUpdate:'Martin O’Neill has publicly confirmed Celtic’s interest and said he would like Emenalo in the squad. No loan agreement has yet been announced.',
-    confidence:'Very high', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16678559/celtic-loan-swoop-chelsea-lennoxtown-tour-emenalo/'
+    category:'Incoming target', player:'Landon Emenalo', previousStatus:'Celtic were targeting the Chelsea left-back for a loan after he toured Lennoxtown.', latestUpdate:'Martin O’Neill has publicly confirmed Celtic’s interest and said he would like Emenalo in the squad. No loan agreement has yet been announced.', confidence:'Very high', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16678559/celtic-loan-swoop-chelsea-lennoxtown-tour-emenalo/'
   },
   {
-    category:'Potential departure', player:'Reo Hatate',
-    previousStatus:'Baur’s arrival was expected to facilitate a Hatate departure, but no destination had emerged.',
-    latestUpdate:'Panathinaikos have emerged as a concrete suitor and are reportedly prepared to offer Hatate a substantial wage increase. Celtic are expected to demand a seven-figure fee; no agreement has been reported.',
-    confidence:'Medium–High', updated:'15 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16690351/celtic-star-transfer-target-panathinaikos-offer-bumper-wage-rise/'
+    category:'Potential departure', player:'Reo Hatate', previousStatus:'Baur’s arrival was expected to facilitate a Hatate departure, but no destination had emerged.', latestUpdate:'Panathinaikos have emerged as a concrete suitor and are reportedly prepared to offer Hatate a substantial wage increase. Celtic are expected to demand a seven-figure fee; no agreement has been reported.', confidence:'Medium–High', updated:'15 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16690351/celtic-star-transfer-target-panathinaikos-offer-bumper-wage-rise/'
   },
   {
-    category:'Potential departure', player:'Michel-Ange Balikwisha',
-    previousStatus:'No active departure was being tracked.',
-    latestUpdate:'Balikwisha is reportedly set to leave Celtic after one season, with Monza, Basel and Elversberg scouting him. No destination or completed agreement has been announced.',
-    confidence:'Medium–High', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16687469/celtic-flop-leaves-one-year-three-clubs-chase/'
+    category:'Potential departure', player:'Michel-Ange Balikwisha', previousStatus:'No active departure was being tracked.', latestUpdate:'Balikwisha is reportedly set to leave Celtic after one season, with Monza, Basel and Elversberg scouting him. No destination or completed agreement has been announced.', confidence:'Medium–High', updated:'14 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16687469/celtic-flop-leaves-one-year-three-clubs-chase/'
   },
   {
-    category:'Incoming target', player:'Leo Cavallius',
-    previousStatus:'Celtic were considering the Brommapojkarna goalkeeper as competition for Viljami Sinisalo.',
-    latestUpdate:'Celtic are reported to be preparing a bid for Cavallius, with Parma also interested. No completed agreement has been reported.',
-    confidence:'Medium–High', updated:'14 Aug 2026', source:'Scottish Sun / Expressen', url:'https://www.thescottishsun.co.uk/sport/16684739/celtic-battle-serie-a-swedish-goalkeeper-cavallius/'
+    category:'Incoming target', player:'Leo Cavallius', previousStatus:'Celtic were considering the Brommapojkarna goalkeeper as competition for Viljami Sinisalo.', latestUpdate:'Celtic are reported to be preparing a bid for Cavallius, with Parma also interested. No completed agreement has been reported.', confidence:'Medium–High', updated:'14 Aug 2026', source:'Scottish Sun / Expressen', url:'https://www.thescottishsun.co.uk/sport/16684739/celtic-battle-serie-a-swedish-goalkeeper-cavallius/'
   },
   {
-    category:'Incoming target', player:'Ermin Mahmić',
-    previousStatus:'No Celtic move was being tracked.',
-    latestUpdate:'Celtic are actively tracking the Slovan Liberec forward and have enquired about wage expectations and the club’s asking price. Several European clubs are also interested.',
-    confidence:'Medium–High', updated:'13 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16681447/celtic-world-cup-wonderkid-askou-rohl-transfer-bosnia/'
+    category:'Incoming target', player:'Ermin Mahmić', previousStatus:'Celtic were actively tracking Mahmić and had enquired about wage expectations and Slovan Liberec’s asking price.', latestUpdate:'Slovan Liberec manager Branislav Fodrek says Mahmić is currently negotiating a transfer abroad and has been left out of the team while his future is resolved. Celtic remain among the clubs reported to be monitoring him, but the destination has not been identified.', confidence:'High', updated:'17 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16697827/major-celtic-update-boss-speaks-out-ermin-mahmic-transfers/'
   },
   {
-    category:'Incoming target', player:'Farès Ghedjemis',
-    previousStatus:'Celtic had an opening bid rejected by Frosinone but remained interested.',
-    latestUpdate:'Ghedjemis remains on the wider target list, but Celtic’s completed signing of Haissem Hassan reduces the immediate need to accelerate another right-wing deal.',
-    confidence:'Medium', updated:'13 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16651499/celtic-transfer-special-kuhn-replacement-alistair-johnston-hassan/'
+    category:'Incoming target', player:'Farès Ghedjemis', previousStatus:'Celtic had an opening bid rejected by Frosinone but remained interested.', latestUpdate:'Ghedjemis remains on the wider target list, but Celtic’s completed signing of Haissem Hassan reduces the immediate need to accelerate another right-wing deal.', confidence:'Medium', updated:'13 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16651499/celtic-transfer-special-kuhn-replacement-alistair-johnston-hassan/'
   },
   {
-    category:'Potential departure', player:'Dane Murray',
-    previousStatus:'Dundee had explored taking Murray on loan.',
-    latestUpdate:'Celtic rejected Dundee’s loan approach, materially reducing the likelihood of a short-term exit and indicating they currently intend to retain him.',
-    confidence:'Medium–High', updated:'5 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16645908/celtic-rebuff-star-approach-premiership-rivals/'
+    category:'Potential departure', player:'Dane Murray', previousStatus:'Dundee had explored taking Murray on loan.', latestUpdate:'Celtic rejected Dundee’s loan approach, materially reducing the likelihood of a short-term exit and indicating they currently intend to retain him.', confidence:'Medium–High', updated:'5 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16645908/celtic-rebuff-star-approach-premiership-rivals/'
   },
   {
-    category:'Incoming target', player:'Greg Taylor',
-    previousStatus:'No Celtic return was being actively tracked.',
-    latestUpdate:'Celtic are reportedly considering bringing Taylor back from PAOK. Taylor is said to be open to returning, although no formal Celtic approach has been reported and other clubs are interested.',
-    confidence:'Medium–High', updated:'8 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16658651/greg-taylor-celtic-return-stunning-transfer-swoop/'
+    category:'Incoming target', player:'Greg Taylor', previousStatus:'No Celtic return was being actively tracked.', latestUpdate:'Celtic are reportedly considering bringing Taylor back from PAOK. Taylor is said to be open to returning, although no formal Celtic approach has been reported and other clubs are interested.', confidence:'Medium–High', updated:'8 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16658651/greg-taylor-celtic-return-stunning-transfer-swoop/'
   },
   {
-    category:'Potential departure', player:'Kyle Ure',
-    previousStatus:'No active departure was being tracked; Ure featured during pre-season but has one year remaining on his Celtic contract.',
-    latestUpdate:'Ure is reportedly set to join Crewe Alexandra on loan after being told he is not part of Martin O’Neill’s immediate first-team plans. The move has not yet been officially announced.',
-    confidence:'High', updated:'16 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16692385/celtic-star-loan-efl-contract/'
+    category:'Potential departure', player:'Kyle Ure', previousStatus:'No active departure was being tracked; Ure featured during pre-season but has one year remaining on his Celtic contract.', latestUpdate:'Ure is reportedly set to join Crewe Alexandra on loan after being told he is not part of Martin O’Neill’s immediate first-team plans. The move has not yet been officially announced.', confidence:'High', updated:'16 Aug 2026', source:'Scottish Sun', url:'https://www.thescottishsun.co.uk/sport/16692385/celtic-star-loan-efl-contract/'
   }
 ];
 
 const esc=value=>String(value??'').replace(/[&<>'\"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[ch]));
-
-function tableHtml(){
-  return `<div class="transfer-updated" style="display:flex;align-items:center;justify-content:flex-end;gap:.4rem;margin:0 0 .65rem;font-size:.78rem;opacity:.62"><span aria-hidden="true" style="width:.42rem;height:.42rem;border-radius:50%;background:currentColor;display:inline-block"></span><span>Last updated ${esc(tableLastUpdated)}</span></div><div class="data-table-wrap"><table class="data-table transfer-table"><thead><tr><th>Category</th><th>Player</th><th>Previous status</th><th>Latest credible update</th><th>Confidence</th><th>Source</th></tr></thead><tbody>${speculation.map(item=>`<tr><td><span class="status-chip upcoming">${esc(item.category)}</span></td><td><strong>${esc(item.player)}</strong></td><td>${esc(item.previousStatus)}</td><td>${esc(item.latestUpdate)}</td><td><strong>${esc(item.confidence)}</strong></td><td><a href="${esc(item.url)}" target="_blank" rel="noreferrer">${esc(item.source)}<br><small>${esc(item.updated)}</small> ↗</a></td></tr>`).join('')}</tbody></table></div>`;
-}
-
-function render(){
-  const grid=document.getElementById('transfer-grid');
-  if(!grid)return;
-  const html=tableHtml();
-  if(grid.innerHTML!==html)grid.innerHTML=html;
-}
-
-document.addEventListener('DOMContentLoaded',()=>{
-  const grid=document.getElementById('transfer-grid');
-  if(!grid)return;
-  render();
-  const observer=new MutationObserver(()=>{
-    observer.disconnect();
-    render();
-    observer.observe(grid,{childList:true,subtree:true});
-  });
-  observer.observe(grid,{childList:true,subtree:true});
-});
+function tableHtml(){return `<div class="transfer-updated" style="display:flex;align-items:center;justify-content:flex-end;gap:.4rem;margin:0 0 .65rem;font-size:.78rem;opacity:.62"><span aria-hidden="true" style="width:.42rem;height:.42rem;border-radius:50%;background:currentColor;display:inline-block"></span><span>Last updated ${esc(tableLastUpdated)}</span></div><div class="data-table-wrap"><table class="data-table transfer-table"><thead><tr><th>Category</th><th>Player</th><th>Previous status</th><th>Latest credible update</th><th>Confidence</th><th>Source</th></tr></thead><tbody>${speculation.map(item=>`<tr><td><span class="status-chip upcoming">${esc(item.category)}</span></td><td><strong>${esc(item.player)}</strong></td><td>${esc(item.previousStatus)}</td><td>${esc(item.latestUpdate)}</td><td><strong>${esc(item.confidence)}</strong></td><td><a href="${esc(item.url)}" target="_blank" rel="noreferrer">${esc(item.source)}<br><small>${esc(item.updated)}</small> ↗</a></td></tr>`).join('')}</tbody></table></div>`;}
+function render(){const grid=document.getElementById('transfer-grid');if(!grid)return;const html=tableHtml();if(grid.innerHTML!==html)grid.innerHTML=html;}
+document.addEventListener('DOMContentLoaded',()=>{const grid=document.getElementById('transfer-grid');if(!grid)return;render();const observer=new MutationObserver(()=>{observer.disconnect();render();observer.observe(grid,{childList:true,subtree:true});});observer.observe(grid,{childList:true,subtree:true});});
 })();
